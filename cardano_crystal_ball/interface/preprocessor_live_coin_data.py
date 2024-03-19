@@ -2,6 +2,9 @@ import pandas as pd
 
 from apis.live_coin_watch.utils import api_request, get_alot_of_data, convert_timestamp_to_time_string
 
+from sklearn.preprocessing import MinMaxScaler
+
+
 
 def get_data_from_api_and_add_date_related_fields (start, end):
     """
@@ -26,4 +29,15 @@ def get_data_from_api_and_add_date_related_fields (start, end):
     # df_hour = pd.to_datetime(df['date']).dt.hour
     # df['hour'] = df_hour
 
+    return df
+
+
+def do_scaling_df_with_live_coin_data (df, columns=["volume", "cap", "liquidity"] ):
+    """
+    all values in the columns of the columns listshould will be be scaled with MinMaxScaler
+    """
+    scaler = MinMaxScaler()
+    # scale only this columns
+    # columns=["volume", "cap", "liquidity"]
+    df[columns] = scaler.fit_transform(df[columns])
     return df
