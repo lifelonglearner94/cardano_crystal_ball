@@ -1,7 +1,7 @@
 import pytest
 import pandas as pd
 
-from cardano_crystal_ball.interface.preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields
+from interface.preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields
 
 
 def test_processor_franz():
