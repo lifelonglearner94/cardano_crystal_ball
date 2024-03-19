@@ -34,10 +34,8 @@ def get_data_from_api_and_add_date_related_fields (start, end):
 
 def do_scaling_df_with_live_coin_data (df, columns=["volume", "cap", "liquidity"] ):
     """
-    all values in the columns of the columns listshould will be be scaled with MinMaxScaler
+    all values in the columns of the columns list should will be be scaled with MinMaxScaler
     """
     scaler = MinMaxScaler()
-    # scale only this columns
-    # columns=["volume", "cap", "liquidity"]
     df[columns] = scaler.fit_transform(df[columns])
     return df
