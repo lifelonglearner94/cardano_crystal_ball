@@ -10,15 +10,15 @@ API_KEY = "a8558c74-f457-4c85-bb47-e2772d339c94"
 def api_request(start, end):
     """
     Sends a POST request to the Livecoinwatch API to retrieve historical data for a specific coin within a given time range.
-    
+
     Parameters:
         start (int): Start timestamp for the data retrieval.
         end (int): End timestamp for the data retrieval.
-    
+
     Returns:
         dict: Response containing historical data fetched from the API.
     """
-    
+
 
     url = 'https://api.livecoinwatch.com/coins/single/history'
 
@@ -45,7 +45,7 @@ def api_request(start, end):
 def get_api_limit():
     """
     Retrieves the remaining daily API credits from Livecoinwatch API.
-    
+
     Returns:
         int: Number of remaining daily credits.
     """
@@ -59,18 +59,18 @@ def get_api_limit():
 
     response = requests.request("POST", url, headers=headers, data=payload).json()
 
-    
+
     return response["dailyCreditsRemaining"]
 
 
 def convert_timestamp_to_time_string(timestamp, ms=True):
     """
     Converts a timestamp to a human-readable date and time string.
-    
+
     Parameters:
         timestamp (int): Timestamp to be converted.
         ms (bool): Indicates whether the timestamp is in milliseconds. Default is True.
-    
+
     Returns:
         str: Human-readable date and time string.
     """
@@ -89,10 +89,10 @@ def convert_timestamp_to_time_string(timestamp, ms=True):
 def convert_datetime_to_milliseconds(datetime_str):
     """
     Converts a datetime string to milliseconds since the epoch (January 1, 1970).
-    
+
     Parameters:
         datetime_str (str): Datetime string in the format '%Y-%m-%d %H:%M:%S'.
-    
+
     Returns:
         int: Timestamp in milliseconds.
     """
@@ -113,11 +113,11 @@ def convert_datetime_to_milliseconds(datetime_str):
 def get_4_days_of_data(start, end):
     """
     Retrieves historical data for a 4-day period from the Livecoinwatch API.
-    
+
     Parameters:
         start (int): Start timestamp for the data retrieval.
         end (int): End timestamp for the data retrieval.
-    
+
     Returns:
         pandas.DataFrame: DataFrame containing historical data for the specified period.
     """
@@ -150,11 +150,11 @@ def get_4_days_of_data(start, end):
 def get_alot_of_data(start_date_as_string, end_date_as_string):
     """
     Retrieves historical data for a large time range by fetching data in 4-day intervals.
-    
+
     Parameters:
         start_date_as_string (str): Start date in the format '%Y-%m-%d %H:%M:%S'.
         end_date_as_string (str): End date in the format '%Y-%m-%d %H:%M:%S'.
-    
+
     Returns:
         pandas.DataFrame: DataFrame containing historical data for the specified time range.
     """
@@ -179,7 +179,7 @@ def get_alot_of_data(start_date_as_string, end_date_as_string):
         rolling_date += 345600000
 
     big_df["date"] = big_df["date"].apply(convert_timestamp_to_time_string)
-    
+
     return big_df
 
 

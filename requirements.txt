@@ -9,3 +9,4 @@ seaborn
 scikit-learn
 jupyter
 darts
+pytest
