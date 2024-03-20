@@ -1,4 +1,11 @@
 raw_data/
 .env
+
+## MAC-OS stuff
 .DS_Store
+
+## python and notebook related temporary files
+
 **/__pycache__/
+**/.ipynb_checkpoints/
+.
