@@ -2,6 +2,17 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
 def preprocess_trends(csv):
+    """
+    Taking weekly Google Trends data, for search terms
+        - Cardano (Topic)
+        - Bitcoin (Topic)
+        - Cryptocurrency (topic)
+        - Ethereum (Topic)
+        - Cardano price (search query)
+        as a CSV.
+
+        Returns: DataFrame with data converted to hourly and MinMaxScaled.
+    """
     # Load Trends data into dataframe
     df = pd.read_csv(csv)
 
@@ -37,6 +48,11 @@ def preprocess_trends(csv):
 
 
 def preprocess_fear_greed(csv):
+    """
+    Takes csv file with daily Fear and Greed data.
+    Returns DataFrame with hourly data, and MinMaxScaled.
+
+    """
     # Load Trends data into dataframe
     df = pd.read_csv(csv)
 
@@ -65,7 +81,9 @@ def preprocess_fear_greed(csv):
     # Check if all columns are of numeric value for scaling
     if is_numeric_dtype(df_hourly['value']) == False:
         df_hourly['value'] = pd.to_numeric(df_hourly['value'], errors='coerce')
-        df_hourly['value'].fillna(1, inplace=True)     # NaN gets replace with 1
+        df_hourly['value'] = df_hourly['value'].fillna(1)     # NaN gets replace with 1
+
+    df_hourly.rename(columns={'value': 'fg_value'}, inplace=True)
 
     # Min_Max Scale data
     df_hourly = df_hourly / 100
