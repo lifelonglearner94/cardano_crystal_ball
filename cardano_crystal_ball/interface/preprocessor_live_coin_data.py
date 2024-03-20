@@ -17,6 +17,8 @@ def get_data_from_api_and_add_date_related_fields (start, end):
 
     df = get_alot_of_data(start_as_string, end_as_string)
 
+    df = df.drop_duplicates()
+
     # extract year, week and weekday from timestamp in new fields
     # df_add_fields = pd.to_datetime(df['date']).dt.isocalendar()
     # df[df_add_fields.columns] = df_add_fields
