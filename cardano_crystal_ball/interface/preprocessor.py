@@ -7,7 +7,7 @@ read dataframe from preprocessor_live_coin_data
 import pandas as pd
 
 from preprocessing_trends_fg import preprocess_fear_greed, preprocess_trends
-from preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields
+from preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields, do_scaling_df_with_live_coin_data
 
 def preprocessor(start, end, csv_fg, csv_trends):
 
@@ -21,19 +21,20 @@ def preprocessor(start, end, csv_fg, csv_trends):
     df_fg = preprocess_fear_greed(csv_fg)
 
 
-    df_coin = get_data_from_api_and_add_date_related_fields(int(start.timestamp()),int(end.timestamp()))
+    df_temp = get_data_from_api_and_add_date_related_fields(int(start.timestamp()),int(end.timestamp()))
+    df_coin = do_scaling_df_with_live_coin_data(df_temp)
+
     df_coin = df_coin.set_index('date')
     df_coin.index = pd.to_datetime(df_coin.index)
 
-    new_df = df_fg[df_fg.index >= df_coin['date'].min()]
-    temp_fg = new_df[new_df.index <= df_coin['date'].max()]
+    new_df = df_fg[df_fg.index >= df_coin.index.min()]
+    temp_fg = new_df[new_df.index <= df_coin.index.max()]
 
-    df_trends = preprocess_trends(csv_trends)
-    new_trends = df_trends[df_trends.index >= df_coin['date'].min()]
-    temp_trends = new_trends[new_trends.index <= df_coin['date'].max()]
+    new_trends = df_trends[df_trends.index >= df_coin.index.min()]
+    temp_trends = new_trends[new_trends.index <= df_coin.index.max()]
 
     df = pd.concat([df_coin, temp_fg, temp_trends], axis=1)
 
-    df.to_csv ('raw_data/preprocess.csv')
+    df.to_csv ('../raw_data/preprocess.csv')
 
     return df
