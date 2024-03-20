@@ -38,7 +38,7 @@ def preprocess_trends(csv):
     for col in df_hourly.columns:
         if is_numeric_dtype(df_hourly[col]) == False:
             df_hourly[col] = pd.to_numeric(df_hourly[col], errors='coerce')
-            df_hourly[col].fillna(1, inplace=True)       # NaN gets replace by 1
+            df_hourly[col] = df_hourly[col].fillna(1)       # NaN gets replace by 1
 
     # Min_Max Scale data
     df_hourly = df_hourly / 100
