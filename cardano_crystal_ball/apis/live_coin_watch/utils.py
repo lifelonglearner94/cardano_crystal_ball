@@ -4,8 +4,15 @@ from datetime import datetime
 import pandas as pd
 from time import sleep
 import pytz
+# from dotenv import load_dotenv
+import os
+
+# def get_apikey_from_env():
+#     load_dotenv()
+#     return os.environ.get("API_KEY")
 
 API_KEY = "a8558c74-f457-4c85-bb47-e2772d339c94"
+# API_KEY = get_apikey_from_env()
 
 def api_request(start, end):
     """
@@ -126,7 +133,7 @@ def get_4_days_of_data(start, end):
 
         df = pd.DataFrame()
 
-        for i in range(  len(response["history"])  ):
+        for i in range(  len(response["history"]) -1 ):
 
             line = pd.DataFrame.from_dict([response["history"][i]])
 
@@ -181,5 +188,3 @@ def get_alot_of_data(start_date_as_string, end_date_as_string):
     big_df["date"] = big_df["date"].apply(convert_timestamp_to_time_string)
 
     return big_df
-
-
