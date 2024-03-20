@@ -2,6 +2,16 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
 def preprocess_trends(csv):
+    """
+    Taking Google Trends data, for search terms
+        - Cardano (Topic)
+        - Bitcoin (Topic)
+        - Cryptocurrency (topic)
+        - Ethereum (Topic)
+        - Cardano price (search query)
+        as a CSV.
+        Turn it
+    """
     # Load Trends data into dataframe
     df = pd.read_csv(csv)
 
@@ -71,4 +81,3 @@ def preprocess_fear_greed(csv):
     df_hourly = df_hourly / 100
 
     return df_hourly
-
