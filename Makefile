@@ -6,3 +6,6 @@ pylint:
 
 pytest:
   PYTHONDONTWRITEBYTECODE=1 pytest -v --color=yes
+
+run_api:
+	uvicorn cardano_cristall_ball.api.fast:app --reload

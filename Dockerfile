@@ -1,11 +1,11 @@
-FROM tensorflow/tensorflow:2.10.0
+FROM python:3.8.12-slim
 
 COPY requirements_prod.txt requirements.txt
 RUN pip install -r requirements.txt
 
 COPY cardano_crystal_ball cardano_crystal_ball
-# COPY setup.py setup.py
-# RUN pip install .
+COPY setup.py setup.py
+RUN pip install .
 
 COPY Makefile Makefile
 
