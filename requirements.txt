@@ -11,3 +11,6 @@ jupyter
 darts
 pytest
 tensorflow
+uvicorn
+fastapi
+requests
