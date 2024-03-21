@@ -6,8 +6,9 @@ read dataframe from preprocessor_live_coin_data
 
 import pandas as pd
 
-from preprocessing_trends_fg import preprocess_fear_greed, preprocess_trends
-from preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields, do_scaling_df_with_live_coin_data
+from cardano_crystal_ball.interface.preprocessing_trends_fg import preprocess_fear_greed, preprocess_trends
+from cardano_crystal_ball.interface.preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields, do_scaling_df_with_live_coin_data
+from cardano_crystal_ball.helper.file_system_helper import search_upwards
 
 def preprocessor(start, end, csv_fg, csv_trends):
 
@@ -35,6 +36,6 @@ def preprocessor(start, end, csv_fg, csv_trends):
 
     df = pd.concat([df_coin, temp_fg, temp_trends], axis=1)
 
-    df.to_csv ('../raw_data/preprocess.csv')
+    df.to_csv (search_upwards('raw_data')/'raw_data/preprocess.csv')
 
     return df
