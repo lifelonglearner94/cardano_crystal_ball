@@ -4,15 +4,14 @@ from datetime import datetime
 import pandas as pd
 from time import sleep
 import pytz
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
-# def get_apikey_from_env():
-#     load_dotenv()
-#     return os.environ.get("API_KEY")
+def get_apikey_from_env():
+    load_dotenv()
+    return os.environ.get("API_KEY")
 
-API_KEY = "a8558c74-f457-4c85-bb47-e2772d339c94"
-# API_KEY = get_apikey_from_env()
+API_KEY = get_apikey_from_env()
 
 def api_request(start, end):
     """

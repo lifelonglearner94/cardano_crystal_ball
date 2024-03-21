@@ -1,0 +1,5 @@
+#
+# Copy this to .env and adjust the API_KEY
+#
+
+API_KEY=<API-KEY of live-coin-watch>
