@@ -20,4 +20,5 @@ def test_do_scaling_df_with_live_coin_data():
     df1 = do_scaling_df_with_live_coin_data(df,columns)
     assert df1['liquidity'].max() > 10
     assert df1['cap'].max() <= 1
-    assert df1['volume'].min() <= 1
+    assert df1['volume'].max() <= 1
+    assert df1['rate'].max() <= 1
