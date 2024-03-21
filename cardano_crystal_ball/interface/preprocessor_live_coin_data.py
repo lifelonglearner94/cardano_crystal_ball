@@ -1,6 +1,6 @@
 import pandas as pd
 
-from apis.live_coin_watch.utils import api_request, get_alot_of_data, convert_timestamp_to_time_string
+from cardano_crystal_ball.apis.live_coin_watch.utils import api_request, get_alot_of_data, convert_timestamp_to_time_string
 
 from sklearn.preprocessing import MinMaxScaler
 

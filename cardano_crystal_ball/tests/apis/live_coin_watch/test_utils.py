@@ -2,7 +2,7 @@ import pytest
 
 import pandas as pd
 
-from apis.live_coin_watch.utils import get_api_limit, get_alot_of_data,\
+from cardano_crystal_ball.apis.live_coin_watch.utils import get_api_limit, get_alot_of_data,\
         get_4_days_of_data, api_request, convert_timestamp_to_time_string
 
 def test_get_api_limit():
