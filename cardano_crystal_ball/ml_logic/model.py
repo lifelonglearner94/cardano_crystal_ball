@@ -2,9 +2,12 @@ from darts.models import BlockRNNModel
 from torchmetrics.regression import SymmetricMeanAbsolutePercentageError
 import torch
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
-#from cardano_crystal_ball.interface import preprocessor
+from darts import TimeSeries
+from darts.metrics import smape
 
 def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, learning_rate_decay=True, batch_size=32, epochs=50, es_patience=7, accelerator="cpu"):
+
+    #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
     my_stopper = EarlyStopping(
     monitor="val_loss",
@@ -58,8 +61,41 @@ def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, l
 
 
 
-def train_model(model, y, past_covariates, future_covariates=None):
-    pass
+def train_model(model, type_of_model: str, y_train: TimeSeries, y_val: TimeSeries, past_covariates: TimeSeries, past_covariates_val: TimeSeries, future_covariates=None, future_covariates_val=None):
 
-def evaluate_model():
-    pass
+
+    if type_of_model == "RNN":
+        model.fit(series=y_train,    # the target training data
+            past_covariates=past_covariates,     # the multi covariate features training data
+            val_series=y_val,  # the target validation data
+            val_past_covariates=past_covariates_val,   # the multi covariate features validation data
+            verbose=False)
+
+    elif type_of_model == "TFT":
+        model.fit(series=y_train,    # the target training data
+            past_covariates=past_covariates,     # the multi covariate features training data
+            val_series=y_val,  # the target validation data
+            val_past_covariates=past_covariates_val,   # the multi covariate features validation data
+            future_covariates=future_covariates,
+            val_future_covariates=future_covariates_val,
+            verbose=False)
+
+    print(f"✅ Model trained on {y_train.duration}.")
+
+    return model
+
+
+def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> float:
+
+    smape_score = smape(true_series, forecasted_series) # maybe change the metric !!
+
+    print(f"✅ Model evaluated, SMAPE: {round(smape_score, 2)} %")
+
+    return smape_score
+
+
+def predict_next_24h(model, very_latest_time_series: TimeSeries, very_latest_past_covariates: TimeSeries) -> TimeSeries:
+
+    prediction_series = model.predict(n=24, series=very_latest_time_series, past_covariates=very_latest_past_covariates) #Predict the n time step following the end of the training series, or of the specified series.
+
+    return prediction_series
