@@ -10,3 +10,4 @@ scikit-learn
 jupyter
 darts
 pytest
+tensorflow
