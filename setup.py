@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='cardano_crystal_ball',
       description=
@@ -6,5 +6,6 @@ setup(name='cardano_crystal_ball',
       predict the price of cardano currency in the next hours and days
       based on a deep learning model.
       """,
-      packages=['cardano_crystal_ball']) # You can have several packages, try it
-cd int
+      packages=find_packages(include=['cardano_crystal_ball', 'cardano_crystal_ball.*']),
+      version="0.0.1",
+)
