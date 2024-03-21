@@ -8,6 +8,7 @@ matplotlib
 seaborn
 scikit-learn
 jupyter
+python-dotenv
 darts
 pytest
 tensorflow
