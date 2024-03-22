@@ -16,15 +16,18 @@ def initialize_and_compile_model(type_of_model: str,
 
     #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
+
     my_stopper = EarlyStopping(
     monitor="val_loss",
     patience=es_patience,
     min_delta=0.005,
     mode='min',
     )
-
-    pl_trainer_kwargs={"callbacks": [my_stopper],
-                    "accelerator": accelerator}
+    if early_stopping:
+        pl_trainer_kwargs={"callbacks": [my_stopper],
+                        "accelerator": accelerator}
+    else:
+        pl_trainer_kwargs=None
 
     if learning_rate_decay:
         lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau #reduce learning rate when a metric has stopped improving
@@ -39,6 +42,8 @@ def initialize_and_compile_model(type_of_model: str,
         input_chunk_length=120,
 
         output_chunk_length=24,
+
+        n_rnn_layers = n_rnn_layers,
 
         dropout=0.2,
 
@@ -57,6 +62,7 @@ def initialize_and_compile_model(type_of_model: str,
 
         n_epochs=epochs
         )
+
 
     elif type_of_model == "TFT":
         #TODO:
@@ -78,13 +84,24 @@ def train_model(model,
                 future_covariates=None,
                 future_covariates_val=None):
 
+    combined_y = y_train.concatenate(y_val)
+    combined_past_covariates = past_covariates.concatenate(past_covariates_val)
 
     if type_of_model == "RNN":
         model.fit(series=y_train,    # the target training data
             past_covariates=past_covariates,     # the multi covariate features training data
             val_series=y_val,  # the target validation data
             val_past_covariates=past_covariates_val,   # the multi covariate features validation data
+            verbose=True)
+
+        n_epochs_model_1 = model.epochs_trained
+
+        model_2 = initialize_and_compile_model("RNN", learning_rate_decay=False, early_stopping=False, epochs=n_epochs_model_1)
+
+        model_2.fit(series=combined_y,    # the target training data
+            past_covariates=combined_past_covariates,     # the multi covariate features training data
             verbose=False)
+
 
     elif type_of_model == "TFT":
         model.fit(series=y_train,    # the target training data
@@ -93,11 +110,19 @@ def train_model(model,
             val_past_covariates=past_covariates_val,   # the multi covariate features validation data
             future_covariates=future_covariates,
             val_future_covariates=future_covariates_val,
+            verbose=True)
+
+        n_epochs_model_1 = model.epochs_trained
+
+        model_2 = initialize_and_compile_model("RNN", learning_rate_decay=False, early_stopping=False, epochs=n_epochs_model_1)
+
+        model_2.fit(series=combined_y,    # the target training data
+            past_covariates=combined_past_covariates,     # the multi covariate features training data
             verbose=False)
 
-    print(f"✅ Model trained on {y_train.duration}.")
+    print(f"✅ Model trained on {combined_y.duration}.")
 
-    return model
+    return model_2
 
 
 def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> float:
@@ -109,7 +134,7 @@ def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> fl
     return smape_score
 
 
-def predict_next_24h(model, very_latest_time_series: TimeSeries, very_latest_past_covariates: TimeSeries) -> TimeSeries:
+def predict_next_24h(model, very_latest_time_series=None, very_latest_past_covariates=None) -> TimeSeries:
 
     prediction_series = model.predict(n=24, series=very_latest_time_series, past_covariates=very_latest_past_covariates) #Predict the n time step following the end of the training series, or of the specified series.
 
