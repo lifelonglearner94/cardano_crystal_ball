@@ -4,8 +4,15 @@ import torch
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from darts import TimeSeries
 from darts.metrics import smape
+from registry import save_model, save_results
 
-def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, learning_rate_decay=True, batch_size=32, epochs=50, es_patience=7, accelerator="cpu"):
+def initialize_and_compile_model(type_of_model: str,
+                                 start_learning_rate=0.01,
+                                 learning_rate_decay=True,
+                                 batch_size=32,
+                                 epochs=50,
+                                 es_patience=7,
+                                 accelerator="cpu"):
 
     #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
@@ -52,16 +59,24 @@ def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, l
         )
 
     elif type_of_model == "TFT":
-        #Code for the TFT model here
+        #TODO:
+            # Code for the TFT model here
         pass
 
     print("✅ Model initialized & compiled")
-
+    save_model(model)
     return model
 
 
 
-def train_model(model, type_of_model: str, y_train: TimeSeries, y_val: TimeSeries, past_covariates: TimeSeries, past_covariates_val: TimeSeries, future_covariates=None, future_covariates_val=None):
+def train_model(model,
+                type_of_model: str,
+                y_train: TimeSeries,
+                y_val: TimeSeries,
+                past_covariates: TimeSeries,
+                past_covariates_val: TimeSeries,
+                future_covariates=None,
+                future_covariates_val=None):
 
 
     if type_of_model == "RNN":

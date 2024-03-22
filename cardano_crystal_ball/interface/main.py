@@ -3,7 +3,66 @@
 from preprocessor import    preprocessor
 import pandas as pd
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
+from cardano_crystal_ball.ml_logic.model import *
+from darts.utils.missing_values import fill_missing_values
+from params import *
 
+def workflow():
+    """
+    Workflow:
+        - Initializing the model
+        - Compiling the model
+        - Training the model
+        - Evaluating the model
+        - Do prediction
+
+    return:
+        - Prediction results
+    """
+    df = preprocessor(start, end, csv_fg, csv_trend)
+
+    X = df.drop(columns = ["rate"])#, "rate_scaled"])
+    y = df[["rate"]]
+
+    X_timeseries = TimeSeries.from_dataframe(X, fill_missing_dates=True, freq="h")
+    y_timeseries = TimeSeries.from_dataframe(y, fill_missing_dates=True, freq="h")
+
+
+    X_timeseries = fill_missing_values(X_timeseries)
+    y_timeseries = fill_missing_values(y_timeseries)
+
+    X_train, X_test = X_timeseries.split_before(len(y_timeseries)-24)
+    y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24)
+
+    X_train, X_val = X_train.split_before(0.8)
+    y_train, y_val = y_train.split_before(0.8)
+
+
+    model = initialize_and_compile_model(
+                                        type_of_model = MODEL_TYPE,
+                                        start_learning_rate=0.01,
+                                        learning_rate_decay=True,
+                                        batch_size=32,
+                                        epochs=50,
+                                        es_patience=7,
+                                        accelerator="cpu"
+                                        )
+
+
+    model = train_model(model,
+                        MODEL_TYPE,
+                        y_train,
+                        y_val,
+                        X_train,
+                        X_val,
+                        future_covariates=None,
+                        future_covariates_val=None
+                        )
+
+prediction = predict_next_24h()
+score = evaluate_model(
+
+)
 
 if __name__ == '__main__':
 
