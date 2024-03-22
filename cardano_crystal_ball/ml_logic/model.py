@@ -119,7 +119,7 @@ def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> fl
     return smape_score
 
 
-def predict_next_24h(model, very_latest_time_series: TimeSeries, very_latest_past_covariates: TimeSeries) -> TimeSeries:
+def predict_next_24h(model, very_latest_time_series=None, very_latest_past_covariates=None) -> TimeSeries:
 
     prediction_series = model.predict(n=24, series=very_latest_time_series, past_covariates=very_latest_past_covariates) #Predict the n time step following the end of the training series, or of the specified series.
 
