@@ -5,7 +5,7 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from darts import TimeSeries
 from darts.metrics import smape
 
-def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, n_rnn_layers=1, learning_rate_decay=True, batch_size=32, epochs=50, early_stopping=True, es_patience=7, accelerator="cpu"):
+def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.01, n_rnn_layers=1, learning_rate_decay=True, batch_size=32, epochs=500, early_stopping=True, es_patience=7, accelerator="cpu"):
 
     #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
