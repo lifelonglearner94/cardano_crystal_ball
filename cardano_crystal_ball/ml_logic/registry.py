@@ -3,6 +3,7 @@ import time
 from tensorflow import keras
 import pickle
 import glob
+import torch
 
 
 
@@ -22,20 +23,26 @@ def load_model(stage ='Production'):
     if MODEL_TARGET == 'local':
         print('Load latest model from local')
 
-        models_dir = os.PATH.join(LOC_REGISTRY_PATH, 'models')
+        models_dir = os.path.join(LOC_REGISTRY_PATH, 'models')
         loc_model_paths = glob.glob(f"{models_dir}/*")
 
         if not loc_model_paths:
             return None
-
         latest_model_path = sorted(loc_model_paths)[-1]
+        print(latest_model_path)
 
-        latest_model = keras.models.load(latest_model_path)
+        #breakpoint()
+
+        latest_model = torch.load(latest_model_path)
         print("✅ The latest model loaded from local disk")
+
+        #breakpoint()
+
         return latest_model
 
 
-def save_model(model:keras.models = None):
+
+def save_model(model: keras.models = None):
     """
     - Save trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
     -
@@ -47,8 +54,8 @@ def save_model(model:keras.models = None):
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
-    model_path = os.PATH.join(LOC_REGISTRY_PATH, 'models', f'{timestamp}.h5')
-    model.save(model_path)
+    model_path = os.path.join(LOC_REGISTRY_PATH, 'models', f'{timestamp}.h5')
+    torch.save(model, model_path)
 
     print("✅ Model saved locally")
 

@@ -21,3 +21,9 @@ run_api:
 
 make_preprocessor:
 	python cardano_crystal_ball/interface/main.py
+
+run_training:
+	python -c 'from cardano_crystal_ball.interface.main import training; training()'
+
+run_init_model:
+	python -c 'from cardano_crystal_ball.ml_logic.model import initialize_and_compile_model; initialize_and_compile_model()'
