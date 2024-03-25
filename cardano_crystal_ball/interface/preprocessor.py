@@ -9,6 +9,8 @@ import pandas as pd
 from cardano_crystal_ball.interface.preprocessing_trends_fg import preprocess_fear_greed, preprocess_trends
 from cardano_crystal_ball.interface.preprocessor_live_coin_data import get_data_from_api_and_add_date_related_fields, do_scaling_df_with_live_coin_data
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
+from cardano_crystal_ball.helper.file_system_helper import get_from_env
+
 
 
 def check_shape(df_fg, df_trends, df_coin):
@@ -17,7 +19,6 @@ def check_shape(df_fg, df_trends, df_coin):
         (df_trends.shape[0] >= df_coin.shape[0]))
 
 def check_datatypes(df):
-    import ipdb; ipdb.set_trace()
     return True
 
 def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
@@ -29,10 +30,14 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
     csv_trend  - path to the csv file with the google trend data
     """
 
+
+    START_DATE
+
     if end == None :
         end = pd.Timestamp.today(tz='UTC')
     if start == None :
-        start = end - pd.Timedelta(days=5)
+        start = pd.Timestamp(get_from_env("START_DATE"))
+        # start = end - pd.Timedelta(days=5)
 
     if csv_fg == None :
         csv_fg = search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
