@@ -64,11 +64,6 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
     if not check_shape(temp_fg, temp_trends, df_coin):
         raise ValueError(f"The shape of the three dataframes df_fg {temp_fg.shape}, df_coin  {df_coin.shape} and df_trends {temp_trends.shape} is not correct!\nPreprocessing aborted!")
 
-    print (df_coin.dytpes)
-    print (df_coin.dytpes)
-    print (df_coin.dytpes)
-
-
     df = pd.concat([df_coin, temp_fg, temp_trends], axis=1)
 
     df.to_csv (search_upwards('raw_data')/'raw_data/preprocess.csv')

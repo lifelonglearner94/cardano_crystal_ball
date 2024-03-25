@@ -7,8 +7,8 @@ from cardano_crystal_ball.helper.file_system_helper import search_upwards
 
 if __name__ == '__main__':
 
-    start = pd.Timestamp(year=2023,month=1, day=1)
-    end = pd.Timestamp(year=2023,month=1, day=3)
+    start = pd.Timestamp(year=2023,month=12, day=1)
+    end = pd.Timestamp(year=2023,month=12, day=7)
     csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
     csv_trend= search_upwards('raw_data')/'raw_data/trends.csv'
     df = preprocessor(start, end, csv_fg, csv_trend)

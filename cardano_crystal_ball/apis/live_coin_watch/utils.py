@@ -1,4 +1,5 @@
 import requests
+import requests_cache
 import json
 from datetime import datetime
 import pandas as pd
@@ -7,11 +8,14 @@ import pytz
 from dotenv import load_dotenv
 import os
 
+from cardano_crystal_ball.helper.file_system_helper import search_upwards
+
 def get_apikey_from_env():
     load_dotenv()
     return os.environ.get("API_KEY")
 
 API_KEY = get_apikey_from_env()
+requests_cache.install_cache(search_upwards("app_cache",backend='raw_data')+'/raw_data/cache',)
 
 def api_request(start, end):
     """
