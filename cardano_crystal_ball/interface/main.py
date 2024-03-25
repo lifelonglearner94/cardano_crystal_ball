@@ -84,7 +84,7 @@ def training():
 
 def prediction():
     prediction = predict_next_24h()
-    breakpoint()
+
     return prediction
 
 
