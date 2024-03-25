@@ -54,6 +54,11 @@ def save_model(model = None):
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
+    dir_path = os.path.join(LOC_REGISTRY_PATH, 'models')
+
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
     model_path = os.path.join(LOC_REGISTRY_PATH, 'models', f'{timestamp}.pt')
     model.save(model_path)
 
