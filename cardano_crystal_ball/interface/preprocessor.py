@@ -30,9 +30,6 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
     csv_trend  - path to the csv file with the google trend data
     """
 
-
-    START_DATE
-
     if end == None :
         end = pd.Timestamp.today(tz='UTC')
     if start == None :
