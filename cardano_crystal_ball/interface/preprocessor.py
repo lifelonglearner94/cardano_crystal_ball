@@ -68,6 +68,6 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
 
     df = pd.concat([df_coin, temp_fg, temp_trends], axis=1)
 
-    df.to_csv (search_upwards('raw_data')/'raw_data/preprocess.csv')
+    #df.to_csv (search_upwards('raw_data')/'raw_data/preprocess.csv')
 
     return df

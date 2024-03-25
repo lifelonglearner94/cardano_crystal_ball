@@ -5,3 +5,6 @@ LOC_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "cardano_
 LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "cardano_crystal_ball", "data")
 
 MODEL_TYPE = os.environ.get('MODEL_TYPE')
+
+
+START_DATE = os.environ.get('START_DATE')
