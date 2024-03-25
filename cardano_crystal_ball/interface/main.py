@@ -8,6 +8,7 @@ from darts import TimeSeries
 import os
 from pathlib import Path
 from cardano_crystal_ball.ml_logic.registry import *
+import numpy as np
 
 
 def preprocess():
@@ -64,6 +65,9 @@ def training():
 
     X_timeseries = darts.utils.missing_values.fill_missing_values(X_timeseries)
     y_timeseries = darts.utils.missing_values.fill_missing_values(y_timeseries)
+
+    X_timeseries =X_timeseries.astype("float32")
+    y_timeseries = y_timeseries.astype("float32")
 
     X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24) # when the model is in production we should remove these lines
     y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24) # when the model is in production we should remove these lines
