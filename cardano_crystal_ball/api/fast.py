@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from cardano_crystal_ball.interface.main import *
+from sklearn.model_selection import train_test_split
 
 app = FastAPI()
 
@@ -16,14 +17,8 @@ app.add_middleware(
 
 @app.get('/')
 def predict():
-    csv_path = os.path.join(LOCAL_DATA_PATH,'processed', 'preprocess.csv')
-    df = pd.read_csv(csv_path)
 
-
-    X = df.drop(columns = ["rate"])#, "rate_scaled"])
-    y = df[[ "rate"]]
-
-
-
-    pred = app.state.model.predict(y)
-    return {'prediction': pred}
+    model = load_model()
+    pred = model.predict(n = 24, series=None, past_covariates=None)
+    return {'prediction': pred.values()[:, 0].tolist()}
+    #return {'prediction': 'pred'}

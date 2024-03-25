@@ -1,10 +1,9 @@
 from  cardano_crystal_ball.params import *
 import time
-from tensorflow import keras
+#from tensorflow import keras
 import pickle
 import glob
-import torch
-
+from darts.models import BlockRNNModel
 
 
 def load_model(stage ='Production'):
@@ -24,7 +23,7 @@ def load_model(stage ='Production'):
         print('Load latest model from local')
 
         models_dir = os.path.join(LOC_REGISTRY_PATH, 'models')
-        loc_model_paths = glob.glob(f"{models_dir}/*")
+        loc_model_paths = glob.glob(f"{models_dir}/*.pt")
 
         if not loc_model_paths:
             return None
@@ -33,7 +32,8 @@ def load_model(stage ='Production'):
 
         #breakpoint()
 
-        latest_model = torch.load(latest_model_path)
+        #latest_model = model.load(latest_model_path)
+        latest_model =  BlockRNNModel.load(latest_model_path)
         print("✅ The latest model loaded from local disk")
 
         #breakpoint()
@@ -42,20 +42,20 @@ def load_model(stage ='Production'):
 
 
 
-def save_model(model: keras.models = None):
+def save_model(model = None):
     """
-    - Save trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.h5"
+    - Save trained model locally on the hard drive at f"{LOCAL_REGISTRY_PATH}/models/{timestamp}.pt"
     -
     -
     """
     # TODO :
-        #- if MODEL_TARGET='gcs', also save it in the bucket on GCS at "models/{timestamp}.h5"
+        #- if MODEL_TARGET='gcs', also save it in the bucket on GCS at "models/{timestamp}.pt"
         #- if MODEL_TARGET='mlflow', also save it on MLflow
 
     timestamp = time.strftime("%Y%m%d-%H%M%S")
 
-    model_path = os.path.join(LOC_REGISTRY_PATH, 'models', f'{timestamp}.h5')
-    torch.save(model, model_path)
+    model_path = os.path.join(LOC_REGISTRY_PATH, 'models', f'{timestamp}.pt')
+    model.save(model_path)
 
     print("✅ Model saved locally")
 

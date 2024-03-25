@@ -82,8 +82,9 @@ def training():
     save_model(model)
     return model
 
-def prediction(model):
-    prediction = predict_next_24h(model)
+def prediction():
+    prediction = predict_next_24h()
+    breakpoint()
     return prediction
 
 
@@ -100,9 +101,9 @@ if __name__ == '__main__':
     try:
         #preprocess()
         #initialize_compile_model()
-        model = training()
+        #training()
 
-        prediction = prediction(model)
+        prediction = prediction()
         print ('prediction ------->  ' , prediction)
     except:
         import sys
