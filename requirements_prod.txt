@@ -1,0 +1,11 @@
+numpy
+pandas
+scikit-learn
+python-dotenv
+darts
+tensorflow
+uvicorn
+fastapi
+mlflow==2.1.1
+google-cloud-bigquery
+google-cloud-storage

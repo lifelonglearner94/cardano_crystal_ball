@@ -4,18 +4,27 @@ import torch
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from darts import TimeSeries
 from darts.metrics import smape
+from cardano_crystal_ball.ml_logic.registry import *
 
-def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.001, n_rnn_layers=3, learning_rate_decay=True, batch_size=32, epochs=500, early_stopping=True, es_patience=12, accelerator="cpu"):
+def initialize_and_compile_model(type_of_model: str = 'RNN',
+                                 start_learning_rate=0.01,
+                                 learning_rate_decay=True,
+                                 batch_size=32,
+                                 epochs=50,
+                                 es_patience=7,
+                                 early_stopping = True,
+                                 n_rnn_layers = 3,
+                                 accelerator="cpu"):
 
     #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
 
     my_stopper = EarlyStopping(
-    monitor="val_loss",
-    patience=es_patience,
-    min_delta=0.005,
-    mode='min',
-    )
+                            monitor="val_loss",
+                            patience=es_patience,
+                            min_delta=0.005,
+                            mode='min',
+                            )
     if early_stopping:
         pl_trainer_kwargs={"callbacks": [my_stopper],
                         "accelerator": accelerator}
@@ -29,45 +38,41 @@ def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.001, 
 
     if type_of_model == "RNN":
         model = BlockRNNModel(
-
-        model = "LSTM",
-
-        input_chunk_length=120,
-
-        output_chunk_length=24,
-
-        n_rnn_layers = n_rnn_layers,
-
-        dropout=0.2,
-
-        loss_fn=torch.nn.MSELoss(),
-
-        optimizer_cls = torch.optim.Adam,
-        optimizer_kwargs = {'lr': start_learning_rate}, #learning rate
-
-        lr_scheduler_cls = lr_scheduler,
-
-        torch_metrics=SymmetricMeanAbsolutePercentageError(),
-
-        batch_size = batch_size,
-
-        pl_trainer_kwargs = pl_trainer_kwargs,
-
-        n_epochs=epochs
-        )
+                            model = "LSTM",
+                            input_chunk_length=120,
+                            output_chunk_length=24,
+                            n_rnn_layers = n_rnn_layers,
+                            dropout=0.2,
+                            loss_fn=torch.nn.MSELoss(),
+                            optimizer_cls = torch.optim.Adam,
+                            optimizer_kwargs = {'lr': start_learning_rate}, #learning rate
+                            lr_scheduler_cls = lr_scheduler,
+                            torch_metrics=SymmetricMeanAbsolutePercentageError(),
+                            batch_size = batch_size,
+                            pl_trainer_kwargs = pl_trainer_kwargs,
+                            n_epochs=epochs
+                            )
 
 
     elif type_of_model == "TFT":
-        #Code for the TFT model here
+        #TODO:
+            # Code for the TFT model here
         pass
 
     print("✅ Model initialized & compiled")
-
+    save_model(model)
     return model
 
 
 
-def train_model(model, type_of_model: str, y_train: TimeSeries, y_val: TimeSeries, past_covariates: TimeSeries, past_covariates_val: TimeSeries, future_covariates=None, future_covariates_val=None):
+def train_model(model,
+                type_of_model: str,
+                y_train: TimeSeries,
+                y_val: TimeSeries,
+                past_covariates: TimeSeries,
+                past_covariates_val: TimeSeries,
+                future_covariates=None,
+                future_covariates_val=None):
 
     combined_y = y_train.concatenate(y_val)
     combined_past_covariates = past_covariates.concatenate(past_covariates_val)
@@ -106,7 +111,7 @@ def train_model(model, type_of_model: str, y_train: TimeSeries, y_val: TimeSerie
             verbose=False)
 
     print(f"✅ Model trained on {combined_y.duration}.")
-
+    save_model(model_2)
     return model_2
 
 
@@ -119,8 +124,9 @@ def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> fl
     return smape_score
 
 
-def predict_next_24h(model, very_latest_time_series=None, very_latest_past_covariates=None) -> TimeSeries:
+def predict_next_24h( very_latest_time_series=None, very_latest_past_covariates=None) -> TimeSeries:
 
+    model = load_model()
     prediction_series = model.predict(n=24, series=very_latest_time_series, past_covariates=very_latest_past_covariates) #Predict the n time step following the end of the training series, or of the specified series.
 
     return prediction_series
