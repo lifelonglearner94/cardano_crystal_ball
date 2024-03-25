@@ -89,3 +89,4 @@ def preprocess_fear_greed(csv):
     df_hourly = df_hourly / 100
 
     return df_hourly
+
