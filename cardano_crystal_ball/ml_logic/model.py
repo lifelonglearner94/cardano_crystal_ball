@@ -6,7 +6,6 @@ from darts import TimeSeries
 from darts.metrics import smape
 from cardano_crystal_ball.ml_logic.registry import *
 
-<<<<<<< HEAD
 def initialize_and_compile_model(type_of_model: str = 'RNN',
                                  start_learning_rate=0.01,
                                  learning_rate_decay=True,
@@ -16,9 +15,6 @@ def initialize_and_compile_model(type_of_model: str = 'RNN',
                                  early_stopping = True,
                                  n_rnn_layers = 3,
                                  accelerator="cpu"):
-=======
-def initialize_and_compile_model(type_of_model: str, start_learning_rate=0.001, n_rnn_layers=3, learning_rate_decay=True, batch_size=32, epochs=500, early_stopping=True, es_patience=12, accelerator="cpu"):
->>>>>>> 5fe8750a957d561339f8c92e79604d7309244683
 
     #for TFT add:   num_attention_heads, lstm_layers, hidden_size   parameters
 
