@@ -7,11 +7,11 @@ from darts.metrics import smape
 from cardano_crystal_ball.ml_logic.registry import *
 
 def initialize_and_compile_model(type_of_model: str = 'RNN',
-                                 start_learning_rate=0.01,
+                                 start_learning_rate=0.001,
                                  learning_rate_decay=True,
                                  batch_size=32,
-                                 epochs=50,
-                                 es_patience=7,
+                                 epochs=500,
+                                 es_patience=12,
                                  early_stopping = True,
                                  n_rnn_layers = 3,
                                  accelerator="cpu"):
