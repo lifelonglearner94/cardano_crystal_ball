@@ -10,6 +10,8 @@ scikit-learn
 jupyter
 python-dotenv
 darts
+requests_cache
+google-search-results
 pytest
 uvicorn
 fastapi

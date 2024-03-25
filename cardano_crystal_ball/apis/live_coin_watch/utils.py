@@ -7,6 +7,8 @@ import pytz
 from dotenv import load_dotenv
 import os
 
+from cardano_crystal_ball.helper.file_system_helper import search_upwards
+
 def get_apikey_from_env():
     load_dotenv()
     return os.environ.get("API_KEY")

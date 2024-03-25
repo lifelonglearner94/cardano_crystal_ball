@@ -91,6 +91,7 @@ def prediction():
 
 if __name__ == '__main__':
 
+<<<<<<< HEAD
     # start = pd.Timestamp(year=2023,month=1, day=1)
     # end = pd.Timestamp(year=2023,month=1, day=3)
     # csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
@@ -113,3 +114,12 @@ if __name__ == '__main__':
         extype, value, tb = sys.exc_info()
         traceback.print_exc()
         ipdb.post_mortem(tb)
+=======
+    start = None
+    end = None
+    csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
+    csv_trend= search_upwards('raw_data')/'raw_data/trends.csv'
+    df = preprocessor(start, end, csv_fg, csv_trend)
+    # response = api_request(int(start.timestamp()), int(end.timestamp()))
+    # response = api_request(int(start.timestamp()), int(end.timestamp()))
+>>>>>>> 5fe8750a957d561339f8c92e79604d7309244683
