@@ -3,3 +3,7 @@
 #
 
 API_KEY=<API-KEY of live-coin-watch>
+SERPAPI_KEY=<API-KEY of serapi>
+PATH_TO_FG_CSV="raw_data/fg.csv"
+PATH_TO_TRENDS_CSV="raw_data/trends.csv"
+START_DATE="2022-05-01"
