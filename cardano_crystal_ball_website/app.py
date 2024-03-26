@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import numpy as np
 import pandas as pd
+import plotly.graph_objs as go
 
 def set_background(image_url):
     """
@@ -19,7 +20,7 @@ def set_background(image_url):
          unsafe_allow_html=True
      )
 
-@st.cache
+@st.cache_data
 def creating_df(start, values=None):
     date_range = pd.date_range(start=start, periods=24, freq='H')
     if values == None:
@@ -32,7 +33,7 @@ def creating_df(start, values=None):
 
     return df
 
-@st.cache
+@st.cache_data
 def api_request():
 
     url = 'http://127.0.0.1:8000/' # gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
@@ -46,9 +47,9 @@ def api_request():
 
     return response["prediction"], response["start_time"], response["yesterdays_rate"], response["yesterdays_start_time"], response["upwards_trend"]
 
-prediction, start_time, yesterdays_rate, yesterdays_start_time, upwards_trend = api_request()
 
-set_background("https://images.freeimages.com/images/large-previews/1ca/green-glass-sphere-1196476.jpg")
+
+#set_background("https://images.freeimages.com/images/large-previews/1ca/green-glass-sphere-1196476.jpg")
 
 
 st.title('Cardano Crystal Ball 🔮')
@@ -59,22 +60,34 @@ button1 = st.button("Predict prices of tomorrow")
 
 st.markdown(f"\n")
 
+
+
+#ADD GRIDLINES
+#ADD MIN MAX MEAN VALUES
+# ADD third option for the trend
+
+prediction, start_time, yesterdays_rate, yesterdays_start_time, upwards_trend = api_request()
+
 df1 = creating_df(yesterdays_start_time, yesterdays_rate)
 df2 = creating_df(start_time, prediction)
 
+merged_df = pd.concat([df1, df2], axis=1)
+merged_df.columns = ['Cardano_rate_y', 'Cardano_rate_t']
 
+trace1 = go.Scatter(x=merged_df.index, y=merged_df['Cardano_rate_y'], mode='lines', name='last 24h', line=dict(color='blue'))
+trace2 = go.Scatter(x=merged_df.index, y=merged_df['Cardano_rate_t'], mode='lines', name='next 24h', line=dict(color='red'))
 
+layout = go.Layout(title='Cardanoprice & Forecast',
+                   xaxis=dict(title='Date & Time in UTC', showgrid=True),
+                   yaxis=dict(title='Cardanoprice in USD', showgrid=True))
+
+fig = go.Figure(data=[trace1, trace2], layout=layout)
+
+#st.plotly_chart(fig, theme=None, use_container_width=True)
 
 if button1:
 
-    col1, col2 = st.columns(2, gap="small")
-
-    with col1:
-        st.markdown(f"Rate of the last 24h:")
-        st.line_chart(data=df1, use_container_width=True)
-    with col2:
-        st.markdown(f"Forecasted rate of the next 24h:")
-        st.line_chart(data=df2, use_container_width=True)
+    st.plotly_chart(fig, theme=None, use_container_width=True)
 
     if upwards_trend:
         st.markdown(f"### The price trend is upwards 📈")
