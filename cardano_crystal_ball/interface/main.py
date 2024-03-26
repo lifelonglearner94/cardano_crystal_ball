@@ -8,6 +8,7 @@ from darts import TimeSeries
 import os
 from pathlib import Path
 from cardano_crystal_ball.ml_logic.registry import *
+import numpy as np
 
 
 def preprocess():
@@ -16,33 +17,35 @@ def preprocess():
     """
 
 
-    processed_data_path = Path(LOCAL_DATA_PATH).joinpath('processed','preprocess.csv')
-    if not processed_data_path.exists():
-        start = pd.Timestamp(year=2023,month=1, day=1)
-        end = pd.Timestamp(year=2023,month=2, day=18)
+    processed_csv_data_path = Path(LOCAL_DATA_PATH).joinpath('processed','preprocess.csv')
+
+    processed_data_path_basic = Path(LOCAL_DATA_PATH).joinpath('processed')
+
+    if not processed_data_path_basic.exists():
+        os.makedirs(processed_data_path_basic)
+        start = pd.Timestamp(START_DATE)
+        end = pd.Timestamp(year=2024,month=3, day=11)
         csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
         csv_trend= search_upwards('raw_data')/'raw_data/trends.csv'
         df = preprocessor(start, end, csv_fg, csv_trend)
+        df.to_csv(processed_csv_data_path)
     else:
-        df = pd.read_csv(Path(processed_data_path))
+        df = pd.read_csv(Path(processed_csv_data_path))
 
 
     return df
 
 def initialize_compile_model():
-    model = load_model()
+    try:
+        model = load_model()
+    except:
+        model = None
 
 
     if model is None:
 
         model = initialize_and_compile_model(
                                     type_of_model = MODEL_TYPE,
-                                    start_learning_rate=0.01,
-                                    learning_rate_decay=True,
-                                    batch_size=32,
-                                    epochs=50,
-                                    es_patience=7,
-                                    accelerator="cpu"
                                     )
     return model
 
@@ -64,11 +67,14 @@ def training():
     X_timeseries = darts.utils.missing_values.fill_missing_values(X_timeseries)
     y_timeseries = darts.utils.missing_values.fill_missing_values(y_timeseries)
 
-    X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24)
-    y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24)
+    X_timeseries =X_timeseries.astype("float32")
+    y_timeseries = y_timeseries.astype("float32")
 
-    X_train, X_val = X_train.split_before(0.7)
-    y_train, y_val = y_train.split_before(0.7)
+    #X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24) # when the model is in production we should remove these lines
+    #y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24) # when the model is in production we should remove these lines
+
+    X_train, X_val = X_train.split_before(0.9)
+    y_train, y_val = y_train.split_before(0.9)
 
 
     model = train_model(model,
@@ -91,20 +97,13 @@ def prediction():
 
 if __name__ == '__main__':
 
-    # start = pd.Timestamp(year=2023,month=1, day=1)
-    # end = pd.Timestamp(year=2023,month=1, day=3)
-    # csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
-    # csv_trend= search_upwards('raw_data')/'raw_data/trends.csv'
-    # df = preprocessor(start, end, csv_fg, csv_trend)
-    # # response = api_request(int(start.timestamp()), int(end.timestamp()))
-    # # response = api_request(int(start.timestamp()), int(end.timestamp()))
     try:
         #preprocess()
         initialize_compile_model()
         training()
 
-        prediction = prediction()
-        print ('prediction ------->  ' , prediction)
+        #prediction = prediction()
+        #print ('prediction ------->  ' , prediction)
     except:
         import sys
         import traceback

@@ -1,17 +1,21 @@
 from darts.models import BlockRNNModel
-from torchmetrics.regression import SymmetricMeanAbsolutePercentageError
+from torchmetrics.regression import SymmetricMeanAbsolutePercentageError, MeanAbsoluteError
 import torch
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from darts import TimeSeries
 from darts.metrics import smape
 from cardano_crystal_ball.ml_logic.registry import *
+from darts.models.forecasting.tft_model import TFTModel
+from darts.utils.likelihood_models import QuantileRegression
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 def initialize_and_compile_model(type_of_model: str = 'RNN',
-                                 start_learning_rate=0.01,
+                                 start_learning_rate=0.001,
                                  learning_rate_decay=True,
                                  batch_size=32,
-                                 epochs=50,
-                                 es_patience=7,
+                                 epochs=500,
+                                 es_patience=12,
                                  early_stopping = True,
                                  n_rnn_layers = 3,
                                  accelerator="cpu"):
@@ -55,9 +59,36 @@ def initialize_and_compile_model(type_of_model: str = 'RNN',
 
 
     elif type_of_model == "TFT":
-        #TODO:
-            # Code for the TFT model here
-        pass
+
+        # Input is 5 days (in hours), output is 24 hours.
+        input_chunk_length = (5*24)
+        output_chunk_length = 24
+
+        my_stopper = EarlyStopping(
+                    monitor="val_loss",
+                    patience=5,
+                    min_delta=0.001,
+                    mode='min',
+                )
+
+        pl_trainer_kwargs={"callbacks": [my_stopper],
+                           "accelerator": "cpu"}
+
+
+        model = TFTModel(input_chunk_length =input_chunk_length ,
+               output_chunk_length = output_chunk_length,
+               pl_trainer_kwargs = pl_trainer_kwargs,
+               lstm_layers=2,
+               num_attention_heads=4,
+               dropout=0.3,
+               batch_size=16,
+               hidden_size=64,
+               torch_metrics=MeanAbsoluteError(),
+               n_epochs=1000,
+               likelihood=QuantileRegression(),
+               lr_scheduler_cls = lr_scheduler,
+               random_state=42,
+              )
 
     print("✅ Model initialized & compiled")
     save_model(model)
@@ -77,42 +108,79 @@ def train_model(model,
     combined_y = y_train.concatenate(y_val)
     combined_past_covariates = past_covariates.concatenate(past_covariates_val)
 
-    if type_of_model == "RNN":
-        model.fit(series=y_train,    # the target training data
-            past_covariates=past_covariates,     # the multi covariate features training data
-            val_series=y_val,  # the target validation data
-            val_past_covariates=past_covariates_val,   # the multi covariate features validation data
-            verbose=True)
+    model.fit(series=y_train,    # the target training data
+        past_covariates=past_covariates,     # the multi covariate features training data
+        val_series=y_val,  # the target validation data
+        val_past_covariates=past_covariates_val,   # the multi covariate features validation data
+        verbose=True)
 
-        n_epochs_model_1 = model.epochs_trained
+    n_epochs_model_1 = model.epochs_trained
 
-        model_2 = initialize_and_compile_model("RNN", learning_rate_decay=False, early_stopping=False, epochs=n_epochs_model_1)
+    model_2 = initialize_and_compile_model("RNN", learning_rate_decay=False, early_stopping=False, epochs=n_epochs_model_1)
 
-        model_2.fit(series=combined_y,    # the target training data
-            past_covariates=combined_past_covariates,     # the multi covariate features training data
-            verbose=False)
+    model_2.fit(series=combined_y,    # the target training data
+        past_covariates=combined_past_covariates,     # the multi covariate features training data
+        verbose=False)
 
-
-    elif type_of_model == "TFT":
-        model.fit(series=y_train,    # the target training data
-            past_covariates=past_covariates,     # the multi covariate features training data
-            val_series=y_val,  # the target validation data
-            val_past_covariates=past_covariates_val,   # the multi covariate features validation data
-            future_covariates=future_covariates,
-            val_future_covariates=future_covariates_val,
-            verbose=True)
-
-        n_epochs_model_1 = model.epochs_trained
-
-        model_2 = initialize_and_compile_model("RNN", learning_rate_decay=False, early_stopping=False, epochs=n_epochs_model_1)
-
-        model_2.fit(series=combined_y,    # the target training data
-            past_covariates=combined_past_covariates,     # the multi covariate features training data
-            verbose=False)
-
-    print(f"✅ Model trained on {combined_y.duration}.")
+    print(f"✅ RNN Model trained on {combined_y.duration}.")
     save_model(model_2)
     return model_2
+
+
+def train_tft():
+
+    model = load_model()
+    csv_path = os.path.join(LOCAL_DATA_PATH,'processed', 'preprocess.csv')
+    df = pd.read_csv(csv_path)
+
+    # Further processing for TFT model.
+    df.index = pd.to_datetime(df.index)
+    df.interpolate(method='linear', inplace=True)
+
+    target = df['rate_scaled']
+    past_cov = df.drop(columns=['rate', 'rate_scaled'])
+    future_cov = pd.DataFrame(df.index.to_series().dt.dayofweek)
+
+    future_scaler = MinMaxScaler()
+    future_cov = pd.DataFrame(future_scaler.fit_transform(future_cov))
+
+    # Defining train, test, val.
+    test = 24
+    train = int(0.8*len(df))
+    val = len(df) - train -test
+
+    # Splitting data between future and past for train, test and val.
+    y_train = target[-train-val-test:-val - test]
+    future_cov_train = future_cov[-train-val-test:-val]
+    past_cov_train = past_cov[-train-val-test:-val - test]
+    y_val = target[-val-test:-test]
+    past_cov_val = past_cov[-val-test:-test]
+    future_cov_val = future_cov[-val-test:]
+    y_test = target[-test:]
+
+    # Transforming the Panda series and dataframes into Darts TimeSeries
+    y_train_series = TimeSeries.from_series(y_train)
+    past_cov_train_series = TimeSeries.from_dataframe(past_cov_train)
+    future_cov_train_series = TimeSeries.from_dataframe(future_cov_train)
+
+    y_val_series = TimeSeries.from_series(y_val)
+    past_cov_val_series = TimeSeries.from_dataframe(past_cov_val)
+    future_cov_val_series = TimeSeries.from_dataframe(future_cov_val)
+
+    y_test_series = TimeSeries.from_series(y_test)
+
+    # Train model
+    model.fit(series=y_train_series,
+        past_covariates = past_cov_train_series,
+        future_covariates = future_cov_train_series,
+        val_series=y_val_series,
+        val_past_covariates=past_cov_val_series,
+        val_future_covariates=future_cov_val_series,
+        verbose=True)
+
+    save_model(model)
+
+    return model
 
 
 def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> float:
