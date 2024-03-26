@@ -55,6 +55,7 @@ def get_trends(kw_list):
             first_run = False
         else:
             df[kw]=df_kw[kw]
+    df.to_csv(search_upwards('raw_data')/'raw_data/serpapi.csv')
     return df
 
 def format_result_as_dataframe(csv_result, column_name):
@@ -80,5 +81,4 @@ def put_trends_to_cache(key, value, timeout = TIMEOUT):
 
 if __name__ == "__main__":
     results = get_trends(["Bitcoin","Cardano","cardano price","cryptocurrency","Ethereum"])
-    results.to_csv(search_upwards('raw_data')/'raw_data/serpapi.csv')
     # print (results)
