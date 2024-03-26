@@ -65,7 +65,7 @@ def format_result_as_dataframe(csv_result, column_name):
     df = pd.DataFrame(result)
     df.columns = ["Week",column_name]
     df.index = df['Week']
-    df = df.drop("Week",axis=1)
+    # df = df.drop("Week",axis=1)
     df.head()
     return df
 

@@ -71,3 +71,8 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
     #df.to_csv (search_upwards('raw_data')/'raw_data/preprocess.csv')
 
     return df
+
+if __name__ == "__main__":
+    results = preprocessor()
+    print (results.tail())
+    # print (results)

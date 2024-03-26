@@ -1,6 +1,7 @@
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from cardano_crystal_ball.apis.google_trends import get_trends
+from cardano_crystal_ball.apis.google_trends.get_trends import get_trends
+from cardano_crystal_ball.apis.fg.get_fg import get_fg_from_api
 
 def preprocess_trends(csv, kw_list=["Bitcoin","Cardano","cardano price","cryptocurrency","Ethereum",]):
     """
@@ -109,6 +110,6 @@ def preprocess_fear_greed(csv):
     return df_hourly
 
 if __name__ == "__main__":
-    df = preprocess_fear_greed(None)
+    df = preprocess_trends(None)
     print (df.shape)
     print(df.info())
