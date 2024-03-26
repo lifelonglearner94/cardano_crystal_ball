@@ -100,7 +100,10 @@ if __name__ == '__main__':
     try:
         preprocess()
         initialize_compile_model()
-        training()
+        if MODEL_TYPE == 'RNN':
+            training()
+        else:
+            train_tft()
 
         #prediction = prediction()
         #print ('prediction ------->  ' , prediction)
