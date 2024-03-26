@@ -8,6 +8,7 @@ from darts import TimeSeries
 import os
 from pathlib import Path
 from cardano_crystal_ball.ml_logic.registry import *
+from cardano_crystal_ball.ml_logic.data import load_data_to_bq
 import numpy as np
 
 
@@ -33,6 +34,13 @@ def preprocess():
         df = pd.read_csv(Path(processed_csv_data_path))
 
 
+    load_data_to_bq(
+        df,
+        gcp_project=GCP_PROJECT,
+        bq_dataset=BQ_DATASET,
+        table=f'processed_{START_DATE}',
+        truncate=True
+    )
     return df
 
 def initialize_compile_model():
@@ -134,7 +142,7 @@ def retraining():
 if __name__ == '__main__':
 
     try:
-        #preprocess()
+        # preprocess()
         initialize_compile_model()
         training()
         #retraining()

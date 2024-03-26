@@ -4,7 +4,7 @@ import time
 import pickle
 import glob
 from darts.models import BlockRNNModel
-from colorama import Fore, Style
+
 from google.cloud import storage
 
 
@@ -38,10 +38,10 @@ def load_model(stage ='Production'):
         latest_model =  BlockRNNModel.load(latest_model_path)
         print("✅ The latest model loaded from local disk")
 
-
         return latest_model
+
     elif MODEL_TARGET == "gcs":
-        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+        print(f"\nLoad latest model from GCS..." )
 
         client = storage.Client()
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
