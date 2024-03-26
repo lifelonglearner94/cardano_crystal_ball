@@ -1,9 +1,15 @@
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
-from cardano_crystal_ball.apis.fg.get_fg import get_fg_from_api
+from cardano_crystal_ball.apis.google_trends import get_trends
 
-def preprocess_trends(csv):
+def preprocess_trends(csv, kw_list=["Bitcoin","Cardano","cryptocurrency","Ethereum","cardano price",]):
     """
+
+    parameters:
+        - csv: Path to csv file, as fall back, when the serpapi doesn't work
+        - kw_list: keyword list \
+            default to :["Bitcoin","Cardano","cryptocurrency","Ethereum","cardano price",]
+
     Taking weekly Google Trends data, for search terms
         - Cardano (Topic)
         - Bitcoin (Topic)
@@ -14,8 +20,14 @@ def preprocess_trends(csv):
 
         Returns: DataFrame with data converted to hourly and MinMaxScaled.
     """
-    # Load Trends data into dataframe
-    df = pd.read_csv(csv)
+
+    try: # Load Trends data into dataframe
+        df = get_trends(kw_list)
+        if df.shape[0] < 10: # in case of no Data
+            df = pd.read_csv(csv)
+    except: # if api or internet is not available
+        df = pd.read_csv(csv)
+
 
     # Drop duplicates
     df = df.drop_duplicates()
