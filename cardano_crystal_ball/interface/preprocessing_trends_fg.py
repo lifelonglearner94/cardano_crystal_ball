@@ -2,7 +2,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 from cardano_crystal_ball.apis.google_trends import get_trends
 
-def preprocess_trends(csv, kw_list=["Bitcoin","Cardano","cryptocurrency","Ethereum","cardano price",]):
+def preprocess_trends(csv, kw_list=["Bitcoin","Cardano","cardano price","cryptocurrency","Ethereum",]):
     """
 
     parameters:

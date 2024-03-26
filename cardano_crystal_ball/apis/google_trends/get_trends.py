@@ -46,13 +46,13 @@ def get_trend(kw):
 
 def get_trends(kw_list):
     df = pd.DataFrame()
-    week_exists=False
+    first_run=True
     for kw in kw_list:
         df_kw = get_trend(kw)
         # finishedimport ipdb; ipdb.set_trace()
-        if not week_exists:
+        if first_run:
             df =df_kw
-            week_exists = True
+            first_run = False
         else:
             df[kw]=df_kw[kw]
     return df
