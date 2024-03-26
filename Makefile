@@ -27,3 +27,6 @@ run_training:
 
 run_init_model:
 	python -c 'from cardano_crystal_ball.ml_logic.model import initialize_and_compile_model; initialize_and_compile_model()'
+
+streamlit:
+	-@streamlit run cardano_crystal_ball_website/app.py

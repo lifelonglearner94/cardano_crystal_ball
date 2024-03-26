@@ -69,11 +69,11 @@ def training():
     X_timeseries =X_timeseries.astype("float32")
     y_timeseries = y_timeseries.astype("float32")
 
-    X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24) # when the model is in production we should remove these lines
-    y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24) # when the model is in production we should remove these lines
+    #X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24) # when the model is in production we should remove these lines
+    #y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24) # when the model is in production we should remove these lines
 
-    X_train, X_val = X_train.split_before(0.7)
-    y_train, y_val = y_train.split_before(0.7)
+    X_train, X_val = X_train.split_before(0.9)
+    y_train, y_val = y_train.split_before(0.9)
 
 
     model = train_model(model,
