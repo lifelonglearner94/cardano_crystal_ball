@@ -1,8 +1,16 @@
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+from cardano_crystal_ball.apis.google_trends.get_trends import get_trends
+from cardano_crystal_ball.apis.fg.get_fg import get_fg_from_api
 
-def preprocess_trends(csv):
+def preprocess_trends(csv, kw_list=["Bitcoin","Cardano","cardano price","cryptocurrency","Ethereum",]):
     """
+
+    parameters:
+        - csv: Path to csv file, as fall back, when the serpapi doesn't work
+        - kw_list: keyword list \
+            default to :["Bitcoin","Cardano","cryptocurrency","Ethereum","cardano price",]
+
     Taking weekly Google Trends data, for search terms
         - Cardano (Topic)
         - Bitcoin (Topic)
@@ -13,8 +21,14 @@ def preprocess_trends(csv):
 
         Returns: DataFrame with data converted to hourly and MinMaxScaled.
     """
-    # Load Trends data into dataframe
-    df = pd.read_csv(csv)
+
+    try: # Load Trends data into dataframe
+        df = get_trends(kw_list)
+        if df.shape[0] < 10: # in case of no Data
+            df = pd.read_csv(csv)
+    except: # if api or internet is not available
+        df = pd.read_csv(csv)
+
 
     # Drop duplicates
     df = df.drop_duplicates()
@@ -53,8 +67,13 @@ def preprocess_fear_greed(csv):
     Returns DataFrame with hourly data, and MinMaxScaled.
 
     """
-    # Load Trends data into dataframe
-    df = pd.read_csv(csv)
+    # read newest values from api https://api.alternative.me/fng/
+    try: # Load Trends data into dataframe
+        df = get_fg_from_api(limit="1000")
+        if df.shape[0] < 10: # in case of no Data
+            df = pd.read_csv(csv)
+    except: # if api or internet is not available
+        df = pd.read_csv(csv)
 
     # Drop irrelevant columns
     df = df[['value', 'timestamp']]
@@ -90,3 +109,7 @@ def preprocess_fear_greed(csv):
 
     return df_hourly
 
+if __name__ == "__main__":
+    df = preprocess_trends(None)
+    print (df.shape)
+    print(df.info())
