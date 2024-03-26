@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas.api.types import is_numeric_dtype
+from cardano_crystal_ball.apis.fg.get_fg import get_fg_from_api
 
 def preprocess_trends(csv):
     """
@@ -53,8 +54,13 @@ def preprocess_fear_greed(csv):
     Returns DataFrame with hourly data, and MinMaxScaled.
 
     """
-    # Load Trends data into dataframe
-    df = pd.read_csv(csv)
+    # read newest values from api https://api.alternative.me/fng/
+    try: # Load Trends data into dataframe
+        df = get_fg_from_api(limit="1000")
+        if df.shape[0] < 10: # in case of no Data
+            df = pd.read_csv(csv)
+    except: # if api or internet is not available
+        df = pd.read_csv(csv)
 
     # Drop irrelevant columns
     df = df[['value', 'timestamp']]
@@ -90,3 +96,7 @@ def preprocess_fear_greed(csv):
 
     return df_hourly
 
+if __name__ == "__main__":
+    df = preprocess_fear_greed(None)
+    print (df.shape)
+    print(df.info())
