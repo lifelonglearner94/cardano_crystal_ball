@@ -36,11 +36,12 @@ def preprocess():
     return df
 
 def initialize_compile_model():
-    try:
-        model = load_model()
-    except:
-        model = None
+    # try:
+    #     model = load_model()
+    # except:
+    #     model = None
 
+    model = None
 
     if model is None:
 
@@ -67,14 +68,14 @@ def training():
     X_timeseries = darts.utils.missing_values.fill_missing_values(X_timeseries)
     y_timeseries = darts.utils.missing_values.fill_missing_values(y_timeseries)
 
-    X_timeseries =X_timeseries.astype("float32")
+    X_timeseries = X_timeseries.astype("float32")
     y_timeseries = y_timeseries.astype("float32")
 
     #X_train, X_test = X_timeseries.split_before(len(X_timeseries)-24) # when the model is in production we should remove these lines
     #y_train, y_test = y_timeseries.split_before(len(y_timeseries)-24) # when the model is in production we should remove these lines
 
-    X_train, X_val = X_train.split_before(0.9)
-    y_train, y_val = y_train.split_before(0.9)
+    X_train, X_val = X_timeseries.split_before(0.9)
+    y_train, y_val = y_timeseries.split_before(0.9)
 
 
     model = train_model(model,
@@ -93,6 +94,41 @@ def prediction():
     prediction = predict_next_24h()
     return prediction
 
+def retraining():
+    #for now it retrains on the last 300 hours of data!
+
+    model = load_model()
+    csv_path = os.path.join(LOCAL_DATA_PATH,'processed', 'preprocess.csv')
+    df = pd.read_csv(csv_path)
+
+
+    X = df.drop(columns = ["rate"])#, "rate_scaled"])
+    y = df[['Unnamed: 0', "rate"]]
+
+    X_timeseries = TimeSeries.from_dataframe(X, 'Unnamed: 0', fill_missing_dates=True, freq = 'h')
+    y_timeseries = TimeSeries.from_dataframe(y,'Unnamed: 0', fill_missing_dates=True, freq = 'h')
+
+
+    X_timeseries = darts.utils.missing_values.fill_missing_values(X_timeseries)
+    y_timeseries = darts.utils.missing_values.fill_missing_values(y_timeseries)
+
+    X_timeseries = X_timeseries[-300:]
+    y_timeseries = y_timeseries[-300:]
+
+    X_train, X_val = X_timeseries.split_before(0.5)
+    y_train, y_val = y_timeseries.split_before(0.5)
+
+    model = train_model(model,
+                        MODEL_TYPE,
+                        y_train,
+                        y_val,
+                        X_train,
+                        X_val,
+                        future_covariates=None,
+                        future_covariates_val=None
+                        )
+    save_model(model)
+    return model
 
 
 if __name__ == '__main__':
@@ -101,6 +137,7 @@ if __name__ == '__main__':
         #preprocess()
         initialize_compile_model()
         training()
+        #retraining()
 
         #prediction = prediction()
         #print ('prediction ------->  ' , prediction)
