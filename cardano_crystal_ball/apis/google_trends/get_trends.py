@@ -1,14 +1,18 @@
+import pandas as pd
+import datetime
+from pathlib import Path
 from serpapi import GoogleSearch
 from sqlite3_cache import Cache
+from cardano_crystal_ball.params import *
 from cardano_crystal_ball.helper.file_system_helper import get_from_env
-import pandas as pd
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
-import datetime
 
-TIMEOUT=60*60*24*5 # 5 Tage
+TIMEOUT=60*60*24*8 # 8 Tage
+
+Path(os.path.join(LOCAL_DATA_PATH,'raw')).mkdir(parents=True, exist_ok=True)
 
 cache = Cache(filename='cache.db',
-              path = search_upwards('raw_data')/"raw_data",
+              path = Path(LOCAL_DATA_PATH).joinpath('raw'),
               in_memory=False,
               timeout=TIMEOUT
               )
@@ -40,7 +44,8 @@ def get_trend(kw):
         csv_result = results.get('csv')
         put_trends_to_cache(key,csv_result)
     result = format_result_as_dataframe(csv_result,kw)
-    result.to_csv(search_upwards('raw_data')/('raw_data/' + key ))
+    csv_data_path = Path(LOCAL_DATA_PATH).joinpath('raw',key+'.csv')
+    result.to_csv(csv_data_path)
     return result
 
 
@@ -55,7 +60,9 @@ def get_trends(kw_list):
             first_run = False
         else:
             df[kw]=df_kw[kw]
-    df.to_csv(search_upwards('raw_data')/'raw_data/serpapi.csv')
+
+    csv_data_path = Path(LOCAL_DATA_PATH).joinpath('raw','serpapi.csv')
+    df.to_csv(csv_data_path)
     return df
 
 def format_result_as_dataframe(csv_result, column_name):

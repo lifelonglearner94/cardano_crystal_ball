@@ -27,8 +27,3 @@ def search_upwards(filename):
 def get_from_env(name):
     load_dotenv()
     return os.environ.get(name)
-
-
-
-if __name__ == '__main__':
-    print (search_upwards('raw_data'))

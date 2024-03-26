@@ -1,7 +1,11 @@
 import pandas as pd
 import requests
+from pathlib import Path
+from cardano_crystal_ball.params import *
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
 from cardano_crystal_ball.helper.file_system_helper import get_from_env
+
+
 
 
 def get_fg_from_api(limit = "700"):
@@ -11,8 +15,8 @@ def get_fg_from_api(limit = "700"):
     df = pd.DataFrame(response.get('data'))
     df = df.drop(['time_until_update'],axis=1)
     df = df.sort_values('timestamp')
-    df.to_csv (search_upwards('raw_data')/'raw_data/fg.csv')
-    df.to_csv(search_upwards('raw_data')/('raw_data/' + get_from_env("NAME_FG_CSV")))
+    csv_data_path = Path(LOCAL_DATA_PATH).joinpath('raw',get_from_env("NAME_FG_CSV"))
+    df.to_csv(csv_data_path)
 
     return df
 
