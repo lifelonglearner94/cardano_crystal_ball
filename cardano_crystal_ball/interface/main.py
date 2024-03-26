@@ -26,6 +26,7 @@ def preprocess():
     else:
         df = pd.read_csv(Path(processed_data_path))
 
+
     return df
 
 def initialize_compile_model():
@@ -84,7 +85,6 @@ def training():
 
 def prediction():
     prediction = predict_next_24h()
-    breakpoint()
     return prediction
 
 
@@ -100,8 +100,8 @@ if __name__ == '__main__':
     # # response = api_request(int(start.timestamp()), int(end.timestamp()))
     try:
         #preprocess()
-        #initialize_compile_model()
-        #training()
+        initialize_compile_model()
+        training()
 
         prediction = prediction()
         print ('prediction ------->  ' , prediction)

@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from cardano_crystal_ball.interface.main import *
-from sklearn.model_selection import train_test_split
 
 app = FastAPI()
 

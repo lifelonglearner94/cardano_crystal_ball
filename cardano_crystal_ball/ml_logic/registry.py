@@ -4,6 +4,9 @@ import time
 import pickle
 import glob
 from darts.models import BlockRNNModel
+from colorama import Fore, Style
+from google.cloud import storage
+
 
 
 def load_model(stage ='Production'):
@@ -30,15 +33,33 @@ def load_model(stage ='Production'):
         latest_model_path = sorted(loc_model_paths)[-1]
         print(latest_model_path)
 
-        #breakpoint()
 
         #latest_model = model.load(latest_model_path)
         latest_model =  BlockRNNModel.load(latest_model_path)
         print("✅ The latest model loaded from local disk")
 
-        #breakpoint()
 
         return latest_model
+    elif MODEL_TARGET == "gcs":
+        print(Fore.BLUE + f"\nLoad latest model from GCS..." + Style.RESET_ALL)
+
+        client = storage.Client()
+        blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
+
+    try:
+        latest_blob = max(blobs, key=lambda x: x.updated)
+        latest_model_path = os.path.join(LOC_REGISTRY_PATH, latest_blob.name)
+        latest_blob.download_to_filename(latest_model_path)
+
+        latest_model = BlockRNNModel.load(latest_model_path)
+
+        print("✅ Latest model downloaded from cloud storage")
+
+        return latest_model
+    except:
+        print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
+
+        return None
 
 
 
@@ -58,6 +79,18 @@ def save_model(model = None):
     model.save(model_path)
 
     print("✅ Model saved locally")
+
+    if MODEL_TARGET == "gcs":
+
+        model_filename = model_path.split("/")[-1] # e.g. "20230208-161047.h5" for instance
+        client = storage.Client()
+        bucket = client.bucket(BUCKET_NAME)
+        blob = bucket.blob(f"models/{model_filename}")
+        blob.upload_from_filename(model_path)
+
+        print("✅ Model saved to GCS")
+
+        return None
 
 def save_results(params:dict, metrics:dict):
     """
