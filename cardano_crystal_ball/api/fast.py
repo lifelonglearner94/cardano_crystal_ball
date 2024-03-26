@@ -21,7 +21,7 @@ app.add_middleware(
 def predict():
 
     model = load_model()
-    print(type(app.state.model))
+    #print(type(app.state.model))
     pred = model.predict(n = 24)
 
     yesterdays_rate, yesterdays_start_time = get_yesterdays_rate(pred)
