@@ -1,15 +1,17 @@
-from cardano_crystal_ball.interface.preprocessor import  preprocessor
 import pandas as pd
+import numpy as np
+import darts
+import os
+
+from cardano_crystal_ball.interface.preprocessor import  preprocessor
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
 from cardano_crystal_ball.ml_logic.model import *
-import darts
 from cardano_crystal_ball.params import *
 from darts import TimeSeries
-import os
 from pathlib import Path
 from cardano_crystal_ball.ml_logic.registry import *
-import numpy as np
 
+from pathlib import Path
 
 def preprocess():
     """
@@ -24,9 +26,9 @@ def preprocess():
     if not processed_data_path_basic.exists():
         os.makedirs(processed_data_path_basic)
         start = pd.Timestamp(START_DATE)
-        end = pd.Timestamp(year=2024,month=3, day=11)
-        csv_fg= search_upwards('raw_data')/'raw_data/Fear_and_greed_index_5Y.csv'
-        csv_trend= search_upwards('raw_data')/'raw_data/trends.csv'
+        end = pd.Timestamp(year=2024,month=3, day=26)
+        csv_fg = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','Fear_and_greed_index_5Y.csv')
+        csv_trend = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','trends.csv')
         df = preprocessor(start, end, csv_fg, csv_trend)
         df.to_csv(processed_csv_data_path)
     else:
