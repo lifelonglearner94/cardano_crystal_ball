@@ -1,7 +1,7 @@
 from cardano_crystal_ball.apis.live_coin_watch.utils import *
 from cardano_crystal_ball.params import *
 
-def load_more_livecoin_data_and_save(start: str, end: str):
+def load_more_livecoin_data_and_save(start: str, end: str, full_data=False):
     '''Input shapes need to be YYYY-MM-DD HH:MM:SS'''
 
     dir_path = os.path.join(LOCAL_DATA_PATH, 'raw')
@@ -20,8 +20,10 @@ def load_more_livecoin_data_and_save(start: str, end: str):
 
     start = start.replace(":", "_").replace(" ", "_")
     end = end.replace(":", "_").replace(" ", "_")
-
-    the_path = os.path.join(LOCAL_DATA_PATH, 'raw', f"livecoin_from_{start}_to_{end}.csv")
+    if full_data == False:
+        the_path = os.path.join(LOCAL_DATA_PATH, 'raw', f"livecoin_from_{start}_to_{end}.csv")
+    else:
+        the_path = os.path.join(LOCAL_DATA_PATH, 'raw', f"Hourly_ada_utc.csv")
 
     df.to_csv(the_path)
 
