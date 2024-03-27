@@ -36,6 +36,7 @@ def load_model(stage ='Production'):
 
         #latest_model = model.load(latest_model_path)
         latest_model =  BlockRNNModel.load(latest_model_path)
+
         print("✅ The latest model loaded from local disk")
 
         return latest_model
@@ -46,20 +47,20 @@ def load_model(stage ='Production'):
         client = storage.Client()
         blobs = list(client.get_bucket(BUCKET_NAME).list_blobs(prefix="model"))
 
-    try:
-        latest_blob = max(blobs, key=lambda x: x.updated)
-        latest_model_path = os.path.join(LOC_REGISTRY_PATH, latest_blob.name)
-        latest_blob.download_to_filename(latest_model_path)
+        try:
+            latest_blob = max(blobs, key=lambda x: x.updated)
+            latest_model_path = os.path.join(LOC_REGISTRY_PATH, latest_blob.name)
+            latest_blob.download_to_filename(latest_model_path)
 
-        latest_model = BlockRNNModel.load(latest_model_path)
+            latest_model = BlockRNNModel.load(latest_model_path)
 
-        print("✅ Latest model downloaded from cloud storage")
+            print("✅ Latest model downloaded from cloud storage")
 
-        return latest_model
-    except:
-        print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
+            return latest_model
+        except:
+            print(f"\n❌ No model found in GCS bucket {BUCKET_NAME}")
 
-        return None
+    return None
 
 
 

@@ -143,11 +143,11 @@ if __name__ == '__main__':
 
     try:
         # preprocess()
-        initialize_compile_model()
-        training()
+        #initialize_compile_model()
+        #training()
         #retraining()
 
-        #prediction = prediction()
+        prediction = prediction()
         #print ('prediction ------->  ' , prediction)
     except:
         import sys

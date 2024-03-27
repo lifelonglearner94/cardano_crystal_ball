@@ -20,14 +20,14 @@ app.add_middleware(
 @app.get('/predict')
 def predict():
 
-    model = load_model()
+    #model = load_model()
     #print(type(app.state.model))
-    pred = model.predict(n = 24)
+    pred = app.state.model.predict(n = 24)
+    return {'prediction': pred.values()[:, 0].tolist()}
 
-    yesterdays_rate, yesterdays_start_time = get_yesterdays_rate(pred)
-
-    return {'prediction': pred.values()[:, 0].tolist(),
-            'start_time': pred[0].time_index[0].strftime('%Y-%m-%d %H:%M:%S'),
-            'yesterdays_rate': yesterdays_rate,
-            'yesterdays_start_time': yesterdays_start_time,
-            'upwards_trend': upwards_trend(pred)}
+    #yesterdays_rate, yesterdays_start_time = get_yesterdays_rate(pred)
+    # return {'prediction': pred.values()[:, 0].tolist(),
+    #         'start_time': pred[0].time_index[0].strftime('%Y-%m-%d %H:%M:%S'),
+    #         'yesterdays_rate': yesterdays_rate,
+    #         'yesterdays_start_time': yesterdays_start_time,
+    #         'upwards_trend': upwards_trend(pred)}
