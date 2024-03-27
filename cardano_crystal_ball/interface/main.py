@@ -10,6 +10,7 @@ from cardano_crystal_ball.params import *
 from darts import TimeSeries
 from pathlib import Path
 from cardano_crystal_ball.ml_logic.registry import *
+from cardano_crystal_ball.ml_logic.data import load_data_to_bq
 
 from pathlib import Path
 
@@ -34,6 +35,14 @@ def preprocess():
     else:
         df = pd.read_csv(Path(processed_csv_data_path))
 
+
+    load_data_to_bq(
+        df,
+        gcp_project=GCP_PROJECT,
+        bq_dataset=BQ_DATASET,
+        table=f'processed_{START_DATE}',
+        truncate=True
+    )
     return df
 
 def initialize_compile_model():
@@ -93,7 +102,6 @@ def training():
 
 def prediction():
     prediction = predict_next_24h()
-    #breakpoint()
     return prediction
 
 def retraining():
@@ -136,12 +144,12 @@ def retraining():
 if __name__ == '__main__':
 
     try:
-        #preprocess()
-        initialize_compile_model()
-        training()
+        # preprocess()
+        #initialize_compile_model()
+        #training()
         #retraining()
 
-        #prediction = prediction()
+        prediction = prediction()
         #print ('prediction ------->  ' , prediction)
     except:
         import sys

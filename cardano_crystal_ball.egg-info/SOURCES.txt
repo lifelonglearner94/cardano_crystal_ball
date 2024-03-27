@@ -5,10 +5,15 @@ cardano_crystal_ball/params.py
 cardano_crystal_ball.egg-info/PKG-INFO
 cardano_crystal_ball.egg-info/SOURCES.txt
 cardano_crystal_ball.egg-info/dependency_links.txt
+cardano_crystal_ball.egg-info/requires.txt
 cardano_crystal_ball.egg-info/top_level.txt
 cardano_crystal_ball/api/__init__.py
 cardano_crystal_ball/api/fast.py
 cardano_crystal_ball/apis/__init__.py
+cardano_crystal_ball/apis/fg/__init__.py
+cardano_crystal_ball/apis/fg/get_fg.py
+cardano_crystal_ball/apis/google_trends/__init__.py
+cardano_crystal_ball/apis/google_trends/get_trends.py
 cardano_crystal_ball/apis/live_coin_watch/__init__.py
 cardano_crystal_ball/apis/live_coin_watch/utils.py
 cardano_crystal_ball/helper/__init__.py

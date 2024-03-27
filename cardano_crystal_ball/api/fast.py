@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from cardano_crystal_ball.interface.main import *
 from sklearn.model_selection import train_test_split
 from cardano_crystal_ball.api.api_utils import *
+from cardano_crystal_ball.ml_logic.registry import load_model
 
 app = FastAPI()
 
@@ -16,15 +17,16 @@ app.add_middleware(
 )
 
 
-@app.get('/')
+@app.get('/predict')
 def predict():
 
-    model = load_model()
-    pred = model.predict(n = 24)
+    #model = load_model()
+    #print(type(app.state.model))
+    pred = app.state.model.predict(n = 24)
+    #return {'prediction': pred.values()[:, 0].tolist()}
 
     yesterdays_rate, yesterdays_start_time = get_yesterdays_rate(pred)
-
-    return {'prediction': pred.values()[:, 0].tolist(),
+    return {#'prediction': pred.values()[:, 0].tolist(),
             'start_time': pred[0].time_index[0].strftime('%Y-%m-%d %H:%M:%S'),
             'yesterdays_rate': yesterdays_rate,
             'yesterdays_start_time': yesterdays_start_time,
