@@ -21,7 +21,8 @@ prefect==2.14.9
 google-cloud-bigquery
 google-cloud-storage
 streamlit
-
+glob
+datetime
 
 #tensorflow-macos==2.10.0; sys_platform == 'darwin' and 'ARM' in platform_version # Mac M-chips
 #tensorflow==2.10.0; sys_platform == 'darwin' and 'ARM' not in platform_version # Mac Intel chips

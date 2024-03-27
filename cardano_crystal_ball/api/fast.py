@@ -8,6 +8,9 @@ from cardano_crystal_ball.ml_logic.registry import load_model
 app = FastAPI()
 
 app.state.model = load_model()
+
+
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # Allows all origins
