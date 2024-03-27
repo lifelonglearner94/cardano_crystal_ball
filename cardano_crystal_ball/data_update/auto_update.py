@@ -15,8 +15,16 @@ from darts import utils
 
 def update_data_until_today() -> pd.DataFrame:
 
+    processed_path = Path(LOCAL_DATA_PATH).joinpath('processed')
 
-    processed_path = os.path.join(LOCAL_DATA_PATH, 'processed')
+    raw_path_0 = Path(LOCAL_DATA_PATH).joinpath('raw')
+
+    if not processed_path.exists():
+            os.makedirs(processed_path)
+
+    if not raw_path_0.exists():
+        os.makedirs(raw_path_0)
+
 
     #getting the newest processed csv file
     csv_files = glob.glob(os.path.join(processed_path, '*.csv'))
@@ -65,7 +73,7 @@ def update_data_until_today() -> pd.DataFrame:
     #concat the preprocessed
     processed_concatinated = pd.concat([processed_livecoin_data, processed_fg_data, processed_trends_data], axis=1)
 
-    #conat the existing data with the new data
+    #concat the existing data with the new data
     final_concatinated = pd.concat([newest_csv_as_df, processed_concatinated], axis=0)
 
 
@@ -81,7 +89,11 @@ def update_data_until_today() -> pd.DataFrame:
         final_result = final_concatinated
 
     #save to csv
-    final_result.to_csv(os.path.join(processed_path, f'full_processed_data_from_{START_DATE}_to_{today_date_time.strftime("%Y-%m-%d")}.csv'))
+    full_csv_path = os.path.join(processed_path, f'full_processed_data_from_{START_DATE}_to_{today_date_time.strftime("%Y-%m-%d")}.csv')
+
+    final_result.to_csv(full_csv_path)
+
+    print(f"✅ Updated data succesfully written to {full_csv_path}")
 
     return final_result
 
