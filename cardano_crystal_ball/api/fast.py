@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 
-@app.get('/')
+@app.get('/predict')
 def predict():
 
     model = load_model()
