@@ -4,7 +4,8 @@ MODEL_TARGET = os.environ.get("MODEL_TARGET")
 #LOC_REGISTRY_PATH =  os.path.join(os.path.expanduser('~'), ".lewagon", "cardano_crystal_ball")
 LOC_REGISTRY_PATH =  os.path.join('cardano_crystal_ball', 'outputs')
 
-LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "cardano_crystal_ball", "data")
+#LOCAL_DATA_PATH = os.path.join(os.path.expanduser('~'), ".lewagon", "cardano_crystal_ball", "data")
+LOCAL_DATA_PATH= os.path.join('cardano_crystal_ball', 'database')
 
 MODEL_TYPE = os.environ.get('MODEL_TYPE')
 MODEL_TARGET = os.environ.get("MODEL_TARGET")
