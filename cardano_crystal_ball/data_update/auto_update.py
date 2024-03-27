@@ -53,7 +53,7 @@ def update_data_until_today() -> pd.DataFrame:
         full_existing_livecoin_data_cut = full_existing_livecoin_data[full_existing_livecoin_data.index >= pd.to_datetime(START_DATE)]
         full_raw_livecoin_data = pd.concat([full_existing_livecoin_data_cut, new_raw_livecoin_data], axis=0)
     else:
-        full_raw_livecoin_data = load_more_livecoin_data_and_save(START_DATE + " 00:00:00", now_date_time_str)
+        full_raw_livecoin_data = load_more_livecoin_data_and_save(START_DATE + " 00:00:00", now_date_time_str, full_data=True)
 
     full_raw_livecoin_data.drop_duplicates(inplace=True)
 
