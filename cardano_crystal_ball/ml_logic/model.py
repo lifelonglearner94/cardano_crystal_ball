@@ -101,9 +101,7 @@ def train_model(model,
                 y_train: TimeSeries,
                 y_val: TimeSeries,
                 past_covariates: TimeSeries,
-                past_covariates_val: TimeSeries,
-                future_covariates=None,
-                future_covariates_val=None):
+                past_covariates_val: TimeSeries):
 
     combined_y = y_train.concatenate(y_val)
     combined_past_covariates = past_covariates.concatenate(past_covariates_val)
