@@ -120,9 +120,9 @@ def prediction():
 if __name__ == '__main__':
 
     try:
-        # preprocess()
-        #initialize_compile_model()
-        #training()
+        preprocess()
+        initialize_compile_model()
+        training()
         #retraining()
 
         prediction = prediction()
