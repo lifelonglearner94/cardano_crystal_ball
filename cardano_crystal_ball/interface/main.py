@@ -22,16 +22,34 @@ def preprocess():
     """
     - preprocess.csv must exist before
     """
-    df = update_data_until_today()
+    try: # this is the new way of merging, preprocessing and updating data
+        df = update_data_until_today()
+    except: # if the above doesn't work use the old way below
+
+        processed_csv_data_path = Path(LOCAL_DATA_PATH).joinpath('processed','preprocess.csv')
+
+        processed_data_path_basic = Path(LOCAL_DATA_PATH).joinpath('processed')
+        # breakpoint()
+        if not processed_csv_data_path.exists():
+            # os.makedirs(processed_data_path_basic)
+            start = pd.Timestamp(START_DATE)
+            end = pd.Timestamp(year=2024,month=3, day=26)
+            csv_fg = os.path.join(LOCAL_DATA_PATH,'raw','Fear_and_greed_index_5Y.csv')
+            csv_trend = os.path.join(LOCAL_DATA_PATH,'raw','trends.csv')
+            df = preprocessor(start, end, csv_fg, csv_trend)
+
+            df.to_csv(processed_csv_data_path)
+        else:
+            df = pd.read_csv(Path(processed_csv_data_path))
 
 
-    load_data_to_bq(
-        df,
-        gcp_project=GCP_PROJECT,
-        bq_dataset=BQ_DATASET,
-        table=f'processed_{START_DATE}',
-        truncate=True
-    )
+    # load_data_to_bq(
+    #     df,
+    #     gcp_project=GCP_PROJECT,
+    #     bq_dataset=BQ_DATASET,
+    #     table=f'processed_{START_DATE}',
+    #     truncate=True
+    # )
     return df
 
 def initialize_compile_model():
@@ -106,10 +124,11 @@ if __name__ == '__main__':
 
     try:
         preprocess()
-        initialize_compile_model()
-        training()
-        #prediction = prediction()
+        #initialize_compile_model()
+        #training()
+        #retraining()
 
+        #prediction = prediction()
         #print ('prediction ------->  ' , prediction)
     except:
         import sys

@@ -40,9 +40,9 @@ def preprocessor(start=None, end=None, csv_fg=None, csv_trends=None):
         # start = end - pd.Timedelta(days=5)
 
     if csv_fg == None :
-        csv_fg = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','Fear_and_greed_index_5Y.csv')
+        csv_fg = os.path.join(LOCAL_DATA_PATH,'raw','Fear_and_greed_index_5Y.csv')
     if csv_trends == None :
-        csv_trends = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','trends.csv')
+        csv_trends = os.path.join(LOCAL_DATA_PATH,'raw','trends.csv')
 
     df_trends = preprocess_trends(csv_trends)
     df_fg = preprocess_fear_greed(csv_fg)

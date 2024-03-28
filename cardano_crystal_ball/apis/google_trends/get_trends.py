@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 from pathlib import Path
-from serpapi import GoogleSearch
+import serpapi
 from sqlite3_cache import Cache
 from cardano_crystal_ball.params import *
 from cardano_crystal_ball.helper.file_system_helper import get_from_env
@@ -39,7 +39,7 @@ def get_trend(kw):
         "date": "today 5-y",
         "no_cache": "true"
         }
-        search = GoogleSearch(params)
+        search = serpapi.search(params)
         results = search.get_dict()
         csv_result = results.get('csv')
         put_trends_to_cache(key,csv_result)

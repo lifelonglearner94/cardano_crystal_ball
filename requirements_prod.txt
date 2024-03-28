@@ -9,3 +9,5 @@ fastapi
 #mlflow==2.1.1
 google-cloud-bigquery
 google-cloud-storage
+serpapi
+sqlite3_cache
