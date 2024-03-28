@@ -3,6 +3,8 @@ import numpy as np
 import darts
 import os
 
+#import matplotlib.pyplot as plt
+
 from cardano_crystal_ball.interface.preprocessor import  preprocessor
 from cardano_crystal_ball.helper.file_system_helper import search_upwards
 from cardano_crystal_ball.ml_logic.model import *
@@ -18,7 +20,7 @@ from cardano_crystal_ball.data_update.auto_update import update_data_until_today
 
 def preprocess():
     """
-    - Check if preprocess.csv is not exist then run preprocess
+    - preprocess.csv must exist before
     """
     try: # this is the new way of merging, preprocessing and updating data
         df = update_data_until_today()
@@ -136,3 +138,36 @@ if __name__ == '__main__':
         extype, value, tb = sys.exc_info()
         traceback.print_exc()
         ipdb.post_mortem(tb)
+
+
+
+
+# def preprocess_old():
+#     """
+#     - Check if preprocess.csv is not exist then run preprocess
+#     """
+
+#     processed_csv_data_path = Path(LOCAL_DATA_PATH).joinpath('processed','preprocess.csv')
+
+#     processed_data_path_basic = Path(LOCAL_DATA_PATH).joinpath('processed')
+
+#     if not processed_data_path_basic.exists():
+#         os.makedirs(processed_data_path_basic)
+#         start = pd.Timestamp(START_DATE)
+#         end = pd.Timestamp(year=2024,month=3, day=26)
+#         csv_fg = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','Fear_and_greed_index_5Y.csv')
+#         csv_trend = Path(LOCAL_DATA_PATH).joinpath(LOCAL_DATA_PATH,'raw','trends.csv')
+#         df = preprocessor(start, end, csv_fg, csv_trend)
+#         df.to_csv(processed_csv_data_path)
+#     else:
+#         df = pd.read_csv(Path(processed_csv_data_path))
+
+
+#     load_data_to_bq(
+#         df,
+#         gcp_project=GCP_PROJECT,
+#         bq_dataset=BQ_DATASET,
+#         table=f'processed_{START_DATE}',
+#         truncate=True
+#     )
+#     return df

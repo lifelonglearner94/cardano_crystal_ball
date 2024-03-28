@@ -3,7 +3,7 @@ from torchmetrics.regression import SymmetricMeanAbsolutePercentageError, MeanAb
 import torch
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from darts import TimeSeries
-from darts.metrics import smape
+from darts.metrics import smape, mae
 from cardano_crystal_ball.ml_logic.registry import *
 from darts.models.forecasting.tft_model import TFTModel
 from darts.utils.likelihood_models import QuantileRegression
@@ -118,7 +118,7 @@ def train_model(model,
 
     model_2.fit(series=combined_y,    # the target training data
         past_covariates=combined_past_covariates,     # the multi covariate features training data
-        verbose=False)
+        verbose=True)
 
     print(f"✅ RNN Model trained on {combined_y.duration}.")
     save_model(model_2)
@@ -185,7 +185,9 @@ def evaluate_model(true_series: TimeSeries, forecasted_series: TimeSeries) -> fl
 
     smape_score = smape(true_series, forecasted_series) # maybe change the metric !!
 
-    print(f"✅ Model evaluated, SMAPE: {round(smape_score, 2)} %")
+    mae_score = mae(true_series, forecasted_series)
+
+    print(f"✅ Model evaluated, SMAPE: {round(smape_score, 2)} %\n MAE = {mae_score}")
 
     return smape_score
 
