@@ -9,6 +9,7 @@ from darts.models.forecasting.tft_model import TFTModel
 from darts.utils.likelihood_models import QuantileRegression
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
+from pytorch_lightning.loggers import CSVLogger
 
 def initialize_and_compile_model(type_of_model: str = 'RNN',
                                  start_learning_rate=0.001,
@@ -71,8 +72,11 @@ def initialize_and_compile_model(type_of_model: str = 'RNN',
                     mode='min',
                 )
 
+        logger = CSVLogger("raw_data/logs", name="TFT_logs")
+
         pl_trainer_kwargs={"callbacks": [my_stopper],
-                           "accelerator": "cpu"}
+                           "accelerator": "cpu",
+                           "logger": logger}
 
 
         model = TFTModel(input_chunk_length =input_chunk_length ,
