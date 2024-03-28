@@ -123,13 +123,13 @@ def prediction():
 if __name__ == '__main__':
 
     try:
-        #preprocess()
-        initialize_compile_model()
-        training()
-        # retraining()
+        preprocess()
+        #initialize_compile_model()
+        #training()
+        #retraining()
 
-        prediction = prediction()
-        print ('prediction ------->  ' , prediction)
+        #prediction = prediction()
+        #print ('prediction ------->  ' , prediction)
     except:
         import sys
         import traceback

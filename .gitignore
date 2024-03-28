@@ -10,3 +10,4 @@ cardano_crystal_ball.egg-info/
 **/__pycache__/
 **/.ipynb_checkpoints/
 build/
+cardano_crystal_ball/database/
