@@ -40,7 +40,7 @@ def get_trend(kw):
         "no_cache": "true"
         }
         search = serpapi.search(params)
-        results = search.get_dict()
+        results = search.as_dict()
         csv_result = results.get('csv')
         put_trends_to_cache(key,csv_result)
     result = format_result_as_dataframe(csv_result,kw)

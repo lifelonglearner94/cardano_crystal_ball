@@ -14,7 +14,7 @@ from darts import utils
 
 
 def update_data_until_today() -> pd.DataFrame:
-
+    print('#'*100)
     processed_path = Path(LOCAL_DATA_PATH).joinpath('processed')
 
     raw_path_0 = Path(LOCAL_DATA_PATH).joinpath('raw')
@@ -90,7 +90,6 @@ def update_data_until_today() -> pd.DataFrame:
 
     #save to csv
     full_csv_path = os.path.join(processed_path, f'full_processed_data_from_{START_DATE}_to_{today_date_time.strftime("%Y-%m-%d")}.csv')
-
     final_result.to_csv(full_csv_path)
 
     print(f"✅ Updated data succesfully written to {full_csv_path}")
