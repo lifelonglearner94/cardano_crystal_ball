@@ -82,17 +82,17 @@ def initialize_and_compile_model(type_of_model: str = 'RNN',
         model = TFTModel(input_chunk_length =input_chunk_length ,
                output_chunk_length = output_chunk_length,
                pl_trainer_kwargs = pl_trainer_kwargs,
-               lstm_layers=2,
-               num_attention_heads=4,
-               dropout=0.3,
+               lstm_layers=1,
+               num_attention_heads=8,
+               dropout=0.2,
                batch_size=16,
-               hidden_size=64,
+               hidden_size=32,
                torch_metrics=MeanAbsoluteError(),
                n_epochs=1000,
                likelihood=QuantileRegression(),
                lr_scheduler_cls = lr_scheduler,
-               random_state=42,
-              )
+               random_state=0,
+              ) 
 
     print("✅ Model initialized & compiled")
     save_model(model)
