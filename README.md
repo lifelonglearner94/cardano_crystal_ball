@@ -32,6 +32,9 @@ We’ve implemented the following models for predicting ADA prices:
 - **RNN (LSTM):** Excellent for time series data prediction.
   - Input: 5 days of historical data
   - Target: Predicting ADA price for the next 24 hours
+- **TFT (from DARTS library):** Excellent for interpretable Time Series Forecasting.
+  - Input: 5 days of historical data
+  - Target: Predicting ADA price for the next 24 hours
 
 ## Installation Instructions
 
